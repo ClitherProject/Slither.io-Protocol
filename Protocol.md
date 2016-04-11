@@ -63,6 +63,6 @@ Tells the Client some basic information.
 |19-20|int16|mamu (value / 1E3)
 |21-22|int16|manu2 (value / 1E3)
 |23-24|int16|cst (value / 1E3)
-|25|int8|protocl_version
+|25|int8|protocol_version
 
 
