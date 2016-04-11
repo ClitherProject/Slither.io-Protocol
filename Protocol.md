@@ -81,8 +81,8 @@ New Snake
 |14-16|int24|value / 16777215
 |17|int8|snake skin (between 9 and 21) 
 |18-21|int24|value/ 5  snake X pos
-|22-25|int24|value / 5 snake Y pos
-|26|int8|name lenght
-|27+name lenght|string|nickname
+|22-24|int24|value / 5 snake Y pos
+|25|int8|name lenght
+|26+name lenght|string|nickname
 |?+?|?|arguments something with the parts (body parts of the snake) 
 
