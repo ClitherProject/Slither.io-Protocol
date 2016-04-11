@@ -63,7 +63,6 @@ Tells the Client some basic information. After the msg arrives the game calls "s
 |19-20|int16|mamu (value / 1E3) (default 0.033)
 |21-22|int16|manu2 (value / 1E3) (default 0.028)
 |23-24|int16|cst (value / 1E3) (default 0.43)
-
 |25|int8|protocol_version
 
 
