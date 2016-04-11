@@ -83,6 +83,6 @@ New Snake
 |18-21|int24|value/ 5  snake style 
 |22-25|int24|value / 5 snake key
 |26|int8|name lenght
-|27-?|string|nickname
+|27+name lenght|string|nickname
 |?+?|?|arguments
 
