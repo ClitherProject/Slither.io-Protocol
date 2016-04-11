@@ -86,3 +86,4 @@ New Snake
 |25+name lenght|string|nickname
 |?+?|?|arguments something with the parts (body parts of the snake) 
 
+//sry im to tiered the byte numbers are not 100% correct. I'll fix dem tommorow
