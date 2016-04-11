@@ -41,3 +41,28 @@ The Most messages starts as following:
 |c|-|
 |j|-|
 |y|-|
+
+
+##Server Bound Messages
+
+(Bytes are 0 based)
+
+### Message a
+Tells the Client some basic information.
+
+|bytes|Data type|Description
+|-----|---------|---------
+|3-5|int24|Game Radius
+|6-7|int16|setMscps(e) ?
+|8-9|int16|sector_size
+|10-11|int16|sector_count_along_edge
+|12|int8|spangdv (value / 10)
+|13-14|int16|nsp1 (value / 100)
+|15-16|int16|nsp2 (value / 100)
+|17-18|int16|nsp3 (value / 100)
+|19-20|int16|mamu (value / 1E3)
+|21-22|int16|manu2 (value / 1E3)
+|23-24|int16|cst (value / 1E3)
+|25|int8|protocl_version
+
+
