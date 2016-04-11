@@ -2,9 +2,9 @@
 
 ##### From Server
 
-Every Message that comes from the Server starts with 3 byte. These first 3 byte are the Message Type (The game converts the bytes to an unicode char so i will only speak of the chars not the byte values).
+Every Packet that comes from the Server starts with 3 byte. These first 3 byte are the Message Type (The game converts the bytes to an unicode char so i will only speak of the chars not the byte values).
 
-The Most messages starts as following:
+The Most Packets starts as following:
 
 <table>
   <tr>
@@ -43,11 +43,11 @@ The Most messages starts as following:
 |y|-|
 
 
-##Server Bound Messages
+## Serverbound
 
 (Bytes are 0 based)
 
-### Message a
+### Packet a
 Tells the Client some basic information.
 
 |bytes|Data type|Description
