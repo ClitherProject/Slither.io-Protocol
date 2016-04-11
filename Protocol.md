@@ -79,10 +79,10 @@ New Snake
 |9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang maybe angels of the snake 
 |12-13|int16|value / 1E3 initial speed
 |14-16|int24|value / 16777215
-|17|int8|snake event?
-|18-21|int24|value/ 5  snake style 
-|22-25|int24|value / 5 snake key
+|17|int8|snake skin (between 9 and 21) 
+|18-21|int24|value/ 5  snake X pos
+|22-25|int24|value / 5 snake Y pos
 |26|int8|name lenght
 |27+name lenght|string|nickname
-|?+?|?|arguments
+|?+?|?|arguments something with the parts (body parts of the snake) 
 
