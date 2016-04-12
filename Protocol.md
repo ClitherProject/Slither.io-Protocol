@@ -79,11 +79,16 @@ New Snake
 |9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang maybe angels of the snake 
 |12-13|int16|value / 1E3 initial speed
 |14-16|int24|value / 16777215
-|17|int8|snake skin (between 9 and 21) 
+|17|int8|snake skin (between 9 or 0? and 21) 
 |18-20|int24|value/ 5  snake X pos
 |21-23|int24|value / 5 snake Y pos
 |24|int8|name lenght
 |25+name lenght|string|nickname
-|?+?|?|arguments something with the parts (body parts of the snake) 
+|?|int24|I think head pos x
+|?|int24|I think head pos y
+|?|int8|body n x
+|?|int8|body n y
+Body n is repeating for the amount of body parts
 
-//sry im to tiered the byte numbers are not 100% correct. I'll fix dem tommorow
+
+
