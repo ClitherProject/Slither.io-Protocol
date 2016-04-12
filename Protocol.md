@@ -30,7 +30,7 @@ The Most Packets starts as following:
 |e,E,3,4,5| -        |
 |h       |snake "fam" variable|
 |r       |maybe snake parts|
-|g,n,G,N | -              |
+|g,n,G,N | adds a new body part to a snake|
 |l       | -|
 |v|dead/disconnect packet|
 |w|-|
@@ -90,6 +90,17 @@ This packet recieves the client, whenever an other snake is in players range to 
 |?|int8|n body poart yPos
 Body n is repeating for the amount of body parts
 
+### Packet g G n N
+
+if packet is n or N snake sct is increased by one
+else all body parts are set to dying=true
+
+|bytes|Data type|Description
+|-----|---------|---------
+|3-4|int16|snake id
+|5-6|int16|new or last nody part x
+|7-8|int16|new or last body part y
+|9-11|int24| snake.fam (value / 16777215) only if packet is n or N
 
 
 
