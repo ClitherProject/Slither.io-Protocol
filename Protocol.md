@@ -49,7 +49,7 @@ The Most Packets starts as following:
 
 (Bytes are 0 based)
 
-### Packet a
+### Packet a (InitialPacket)
 Tells the Client some basic information. After the msg arrives the game calls "startShowGame();"
 
 |bytes|Data type|Description
@@ -69,15 +69,15 @@ Tells the Client some basic information. After the msg arrives the game calls "s
 
 
 ### Packet s
-New Snake
+This packet recieves the client, whenever an other snake is in players range to let the client draw the snake.
 
 |bytes|Data type|Description
 |-----|---------|---------
 |3-4|int16|snake id
 |5-7|int24|snake stop ? value * Math.PI / 16777215
-|8|int9|unused
+|8|int8|unused
 |9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang maybe angels of the snake 
-|12-13|int16|value / 1E3 initial speed
+|12-13|int16|value / 1E3 current speed of snake
 |14-16|int24|value / 16777215
 |17|int8|snake skin (between 9 or 0? and 21) 
 |18-20|int24|value/ 5  snake X pos
@@ -86,9 +86,40 @@ New Snake
 |25+name lenght|string|nickname
 |?|int24|I think head pos x
 |?|int24|I think head pos y
-|?|int8|body n x
-|?|int8|body n y
+|?|int8|n body part xPos
+|?|int8|n body poart yPos
 Body n is repeating for the amount of body parts
 
 
 
+
+
+##Clientbound
+
+These packets is the client sending to the server.
+
+### Packet SetUsername
+After clicking on play and recieving the "InitialPacket", the client is sending this packet
+
+|bytes|Data type|Value|Description
+|-----|---------|-----|----------
+|0|int8|115|firtst id
+|1|int8|5|second id
+|2|int8|0-9| a random value between 0 (inclusive) and 9 (inclusive) which the clint is generating and saves in local storage
+|3-?|string||the username if set
+
+
+### Packet UpdateOwnSnake
+This packet sends the client to the server at these client events: onMouseMove, onMouseDown, onMouseUp
+
+|bytes|Data type|Value|Description
+|-----|---------|-----|----------
+|0|int8|0-250|onMouseMove: the angle (currently unknown how the real angle is calculated with this value)
+
+|bytes|Data type|Value|Description
+|-----|---------|-----|----------
+|0|int8|253|onMouseDown: the snake is going in speed mode
+
+|bytes|Data type|Value|Description
+|-----|---------|-----|----------
+|0|int8|254|onMouseUp: the snake is leaving the speed mode
