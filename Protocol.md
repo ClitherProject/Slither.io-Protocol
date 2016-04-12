@@ -37,7 +37,7 @@ The Most Packets starts as following:
 |m|global score packet|
 |p|-|
 |u|-|
-|s|-|
+|s|new Snake|
 |F|-|
 |b,f|-|
 |c|-|
