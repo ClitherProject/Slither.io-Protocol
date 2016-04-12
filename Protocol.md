@@ -32,17 +32,17 @@ The Most Packets starts as following:
 |r       |maybe snake parts|
 |g,n,G,N | -              |
 |l       | -|
-|v|-|
+|v|dead/disconnect packet|
 |w|-|
 |m|global score packet|
-|p|-|
-|u|-|
+|p|ping/pong packet|
+|u|food on minimap i think|
 |s|new Snake|
-|F|-|
-|b,f|-|
-|c|-|
-|j|-|
-|y|-|
+|F|something with new Food|
+|b,f|something with new Food|
+|c|i think food eaten|
+|j|something with the preys (maybe the flying food things)|
+|y|newPrey|
 
 
 ## Serverbound
