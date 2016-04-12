@@ -94,7 +94,7 @@ Body n is repeating for the amount of body parts
 
 
 
-##Clientbound
+## Clientbound
 
 These packets is the client sending to the server.
 
@@ -103,7 +103,7 @@ After clicking on play and recieving the "InitialPacket", the client is sending 
 
 |bytes|Data type|Value|Description
 |-----|---------|-----|----------
-|0|int8|115|firtst id
+|0|int8|115|first id
 |1|int8|5|second id
 |2|int8|0-9| a random value between 0 (inclusive) and 9 (inclusive) which the clint is generating and saves in local storage
 |3-?|string||the username if set
