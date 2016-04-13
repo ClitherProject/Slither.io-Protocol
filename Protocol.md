@@ -15,8 +15,7 @@ The Most Packets starts as following:
      <th>byte4</th>
    </tr>
    <tr>
-    <td></td>
-    <td></td>
+    <td colspan="2"> time since last msg from client</td>
      <td >msg type</td>
      <td colspan="2">snake id</td>
    </tr>
