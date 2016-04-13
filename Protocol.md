@@ -133,3 +133,12 @@ This packet sends the client to the server at these client events: onMouseMove, 
 |bytes|Data type|Value|Description
 |-----|---------|-----|----------
 |0|int8|254|onMouseUp: the snake is leaving the speed mode
+
+### Packet SaveVictoryMessage
+When you have the longest snake of the day, you are able to send a victory message.
+
+|bytes|Data type|Value|Description
+|-----|---------|-----|----------
+|0|int8|255|first id
+|1|int8|118|second id
+|2-?|string||The victory message
