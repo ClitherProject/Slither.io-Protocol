@@ -14,10 +14,10 @@ Most packets start like this:
     <th>Meaning</th>
   </tr>
   <tr>
-    <td>0</td><td>Unknown</td>
+    <td>0</td><td rowspan="2">Time since last message from client</td>
   </tr>
   <tr>
-    <td>1</td><td>Unknown</td>
+    <td>1</td>
   </tr>
   <tr>
     <td>2</td><td><a href="#typetable">Message Type</a></td>
@@ -28,7 +28,7 @@ Most packets start like this:
   <tr>
     <td>4</td>
   </tr>
- </table>
+</table>
 
 
 <a name="typetable" href="#typetable"><h3>Message Types</h3></a>
@@ -120,8 +120,8 @@ packet:
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|0|int8|First id (always 115)|
-|1|int8|Second id (always 5)|
+|0|int8|First ID (always 115)|
+|1|int8|Second ID (always 5)|
 |2|int8|A random value in {0, 9} (inclusive) which the client generates and saves|
 |3-?|string|The client's nickname, if set|
 
@@ -135,3 +135,12 @@ event.
 |0|int8|0-250|mouseMove: the angle (currently unknown how the real angle is calculated with this value)|
 |0|int8|253|onMouseDown: the snake is entering speed mode|
 |0|int8|254|onMouseUp: the snake is leaving speed mode|
+
+### Packet SaveVictoryMessage
+When you have the longest snake of the day, you're able to send a victory message.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0|int8|First ID (always 255)|
+|1|int8|Second ID (always 118)|
+|2-?|string|The victory message|
