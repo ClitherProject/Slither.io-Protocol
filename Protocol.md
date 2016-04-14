@@ -1,144 +1,146 @@
-### Slither.io Protocol Version 6
+# Slither.io Protocol Version 6
 
-##### From Server
+## From Server
 
-Every Packet that comes from the Server starts with 3 byte. The first 3. byte is the Message Type (The game converts the byte to an unicode char so i will only speak of the chars not the byte values).
+Every packet that comes from the server starts with a 3 byte header, which indicates the message
+type. The game converts the bytes to unicode characters so I will only list the character
+representations.
 
-The Most Packets starts as following:
+Most packets start like this:
 
 <table>
   <tr>
-    <th>byte0</th>
-     <th>byte1</th>
-     <th>byte2</th>
-     <th>byte3</th>
-     <th>byte4</th>
-   </tr>
-   <tr>
-    <td colspan="2"> time since last msg from client</td>
-     <td >msg type</td>
-     <td colspan="2">snake id</td>
-   </tr>
- </table>
- 
- 
- 
-|Msg Char|Use            |
-|--------|---------------|
-| a      | Initial Setup |
-|e,E,3,4,5| -        |
-|h       |snake "fam" variable|
-|r       |maybe snake parts|
-|g,n,G,N | adds a new body part to a snake|
-|l       | -|
-|v|dead/disconnect packet|
-|w|-|
-|m|global score packet|
-|p|ping/pong packet|
-|u|food on minimap i think|
-|s|new Snake|
-|F|something with new Food|
-|b,f|something with new Food|
-|c|i think food eaten|
-|j|something with the preys (maybe the flying food things)|
-|y|newPrey|
+    <th>Byte</th>
+    <th>Meaning</th>
+  </tr>
+  <tr>
+    <td>0</td><td rowspan="2">Time since last message from client</td>
+  </tr>
+  <tr>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td>2</td><td><a href="#typetable">Message Type</a></td>
+  </tr>
+  <tr>
+    <td>3</td><td rowspan="2">Snake ID</td>
+  </tr>
+  <tr>
+    <td>4</td>
+  </tr>
+</table>
 
 
-## Serverbound
+<a name="typetable" href="#typetable"><h3>Message Types</h3></a>
+|Type Identifier|Meaning|
+|---------------|-------|
+|a              |<a href="#type_a_detail">Initial setup</a>|
+|e,E,3,4,5      |Unknown|
+|h              |Snake "fam" variable|
+|r              |Maybe snake parts?|
+|g,n,G,N        |<a href="#type_g_detail">Snake update</a>|
+|l              |Unknown|
+|v              |dead/disconnect packet|
+|w              |Unknown|
+|m              |Global score|
+|p              |Ping/pong|
+|u              |Food on minimap?|
+|s              |<a href="#type_s_detail">New snake</a>|
+|F              |Related to new food particles spawning|
+|b,f            |Related to new food particles spawning|
+|c              |Food eaten?|
+|j              |Something related to prey (possibly flying food particles)|
+|y              |New prey|
 
-(Bytes are 0 based)
+<a name="type_a_detail" href="#type_a_detail"><h4>Packet "a" (Initial setup)</h4></a>
+Tells the Client some basic information. After the message arrives, the game calls
+"startShowGame();"
 
-### Packet a (InitialPacket)
-Tells the Client some basic information. After the msg arrives the game calls "startShowGame();"
-
-|bytes|Data type|Description
-|-----|---------|---------
-|3-5|int24|Game Radius (default 21600)
-|6-7|int16|setMscps(value) (default 411) ? setMscps is used to fill the arrays fmlts and fpsls. But Idk for what they are
-|8-9|int16|sector_size (default 480)
-|10-11|int16|sector_count_along_edge (default 130)
-|12|int8|spangdv (value / 10) (default 4.8)
-|13-14|int16|nsp1 (value / 100) (default 4.25) -> maybe nsp stays for "node speed" 
-|15-16|int16|nsp2 (value / 100) (default 0.5)
-|17-18|int16|nsp3 (value / 100) (default 12)
-|19-20|int16|mamu (value / 1E3) (default 0.033)
-|21-22|int16|manu2 (value / 1E3) (default 0.028)
-|23-24|int16|cst (value / 1E3) (default 0.43)
-|25|int8|protocol_version
-
-
-### Packet s
-This packet recieves the client, whenever an other snake is in players range to let the client draw the snake.
-
-|bytes|Data type|Description
-|-----|---------|---------
-|3-4|int16|snake id
-|5-7|int24|snake stop ? value * Math.PI / 16777215
-|8|int8|unused
-|9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang maybe angels of the snake 
-|12-13|int16|value / 1E3 current speed of snake
-|14-16|int24|value / 16777215
-|17|int8|snake skin (between 9 or 0? and 21) 
-|18-20|int24|value/ 5  snake X pos
-|21-23|int24|value / 5 snake Y pos
-|24|int8|name lenght
-|25+name lenght|string|nickname
-|?|int24|I think head pos x
-|?|int24|I think head pos y
-|?|int8|n body part xPos
-|?|int8|n body poart yPos
-Body n is repeating for the amount of body parts
-
-### Packet g G n N
-
-if packet is n or N snake sct is increased by one
-else all body parts are set to dying=true
-
-|bytes|Data type|Description
-|-----|---------|---------
-|3-4|int16|snake id
-|5-6|int16|new or last nody part x
-|7-8|int16|new or last body part y
-|9-11|int24| snake.fam (value / 16777215) only if packet is n or N
+|Bytes|Data Type|Description|Default|
+|-----|---------|-----------|-------|
+|3-5|int24|Game Radius|21600|
+|6-7|int16|setMscps(value)? setMscps is used to fill the arrays fmlts and fpsls. But IDK for what they are.|411|
+|8-9|int16|sector_size|480|
+|10-11|int16|sector_count_along_edge|130|
+|12|int8|spangdv (value / 10)|4.8|
+|13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|
+|15-16|int16|nsp2 (value / 100)|0.5|
+|17-18|int16|nsp3 (value / 100)|12|
+|19-20|int16|mamu (value / 1E3)|0.033|
+|21-22|int16|manu2 (value / 1E3)|0.028|
+|23-24|int16|cst (value / 1E3)|0.43|
+|25|int8|protocol_version|Unknown|
 
 
+<a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (New snake)</h4></a>
+The client receives this packet whenever another snake is in range (that is, close enough to be
+drawn on screen).
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5-7|int24|Snake stop? value * Math.PI / 16777215|
+|8|int8|Unused|
+|9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
+|12-13|int16|value / 1E3 current speed of snake|
+|14-16|int24|value / 16777215|
+|17|int8|Snake skin (between 9 or 0? and 21)|
+|18-20|int24|value/ 5  snake X pos|
+|21-23|int24|value / 5 snake Y pos|
+|24|int8|Name length|
+|25+Name length|string|Snake nickname
+|?|int24|Possibly head position (x)
+|?|int24|Possibly head position (y)
+|?|int8|Body part position (x)
+|?|int8|Body part position (y)
+The last two bytes repeat for each body part.
+
+<a name="type_g_detail" href="#type_g_detail"><h4>Packets "g", "G", "n", and "N" (Snake
+update)</h4></a>
+
+If the message type is "n" or "N", the snake sct is increased by one. Otherwise, all body parts are
+marked as dying.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5-6|int16|New or last nody part x|
+|7-8|int16|New or last body part y|
+|9-11|int24|snake.fam (value / 16777215) (only if packet is n or N)|
 
 
-## Clientbound
 
-These packets is the client sending to the server.
+## From Client
+
+All packets sent from the client contain no headers.
 
 ### Packet SetUsername
-After clicking on play and recieving the "InitialPacket", the client is sending this packet
+After clicking Play and receiving the initial response packet, the client sends the following
+packet:
 
-|bytes|Data type|Value|Description
-|-----|---------|-----|----------
-|0|int8|115|first id
-|1|int8|5|second id
-|2|int8|0-9| a random value between 0 (inclusive) and 9 (inclusive) which the clint is generating and saves in local storage
-|3-?|string||the username if set
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0|int8|First ID (always 115)|
+|1|int8|Second ID (always 5)|
+|2|int8|A random value in {0, 9} (inclusive) which the client generates and saves|
+|3-?|string|The client's nickname, if set|
 
 
 ### Packet UpdateOwnSnake
-This packet sends the client to the server at these client events: onMouseMove, onMouseDown, onMouseUp
+The client sends this packet to the server when it receives a mouseMove, mouseDown, or mouseUp
+event.
 
-|bytes|Data type|Value|Description
-|-----|---------|-----|----------
-|0|int8|0-250|onMouseMove: the angle (currently unknown how the real angle is calculated with this value)
-
-|bytes|Data type|Value|Description
-|-----|---------|-----|----------
-|0|int8|253|onMouseDown: the snake is going in speed mode
-
-|bytes|Data type|Value|Description
-|-----|---------|-----|----------
-|0|int8|254|onMouseUp: the snake is leaving the speed mode
+|Bytes|Data type|Value|Description|
+|-----|---------|-----|-----------|
+|0|int8|0-250|mouseMove: the angle (currently unknown how the real angle is calculated with this value)|
+|0|int8|253|onMouseDown: the snake is entering speed mode|
+|0|int8|254|onMouseUp: the snake is leaving speed mode|
 
 ### Packet SaveVictoryMessage
-When you have the longest snake of the day, you are able to send a victory message.
+When you have the longest snake of the day, you're able to send a victory message.
 
-|bytes|Data type|Value|Description
-|-----|---------|-----|----------
-|0|int8|255|first id
-|1|int8|118|second id
-|2-?|string||The victory message
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0|int8|First ID (always 255)|
+|1|int8|Second ID (always 118)|
+|2-?|string|The victory message|
