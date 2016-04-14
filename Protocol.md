@@ -51,7 +51,7 @@ Most packets start like this:
 |c              |Food eaten?|
 |j              |Something related to prey (possibly flying food particles)|
 |y              |New prey|
-|
+
 
 <a name="type_a_detail" href="#type_a_detail"><h4>Packet "a" (Initial setup)</h4></a>
 Tells the Client some basic information. After the message arrives, the game calls
