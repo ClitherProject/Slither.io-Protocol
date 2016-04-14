@@ -83,7 +83,7 @@ drawn on screen).
 |-----|---------|-----------|
 |3-4|int16|Snake id|
 |5-7|int24|Snake stop? value * Math.PI / 16777215|
-|8|int8|Unused|
+|8|int8|Unused. The 8. Byte is Unused in the game code. But the Server sends it filled with a value. Maybe we miss something here?|
 |9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
 |12-13|int16|value / 1E3 current speed of snake|
 |14-16|int24|value / 16777215|
