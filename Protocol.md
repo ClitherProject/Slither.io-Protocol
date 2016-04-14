@@ -32,6 +32,7 @@ Most packets start like this:
 
 
 <a name="typetable" href="#typetable"><h3>Message Types</h3></a>
+
 |Type Identifier|Meaning|
 |---------------|-------|
 |a              |<a href="#type_a_detail">Initial setup</a>|
@@ -51,6 +52,7 @@ Most packets start like this:
 |c              |Food eaten?|
 |j              |Something related to prey (possibly flying food particles)|
 |y              |New prey|
+
 
 
 <a name="type_a_detail" href="#type_a_detail"><h4>Packet "a" (Initial setup)</h4></a>
