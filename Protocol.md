@@ -3,7 +3,7 @@
 ## From Server
 
 Every packet that comes from the server starts with a 3 byte header, which indicates the message
-type. The game converts the bytes to unicode characters so I will only list the character
+type. The game converts the Message Type byte to a unicode characters so I will only list the character
 representations.
 
 Most packets start like this:
