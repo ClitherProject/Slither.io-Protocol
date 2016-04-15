@@ -42,7 +42,7 @@ Most packets start like this:
 |g,n,G,N        |<a href="#type_g_detail">Snake update</a>|
 |l              |Unknown|
 |v              |dead/disconnect packet|
-|w              |Add/Remove Sectors (for what are the Secotrs???)|
+|w              |Add/Remove Sectors (for what are the Sectors???)|
 |m              |Global score|
 |p              |Ping/pong|
 |u              |Food on minimap?|
