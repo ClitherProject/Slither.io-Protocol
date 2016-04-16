@@ -40,7 +40,7 @@ Most packets start like this:
 |h              |Snake "fam" variable|
 |r              |Maybe snake parts?|
 |g,n,G,N        |<a href="#type_g_detail">Snake update</a>|
-|l              |Unknown|
+|l              |Leaderboard|
 |v              |dead/disconnect packet|
 |w              |Add/Remove Sectors (for what are the Sectors???)|
 |m              |Global score|
