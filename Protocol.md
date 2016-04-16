@@ -1,6 +1,6 @@
 # Slither.io Protocol Version 6
 
-## From Server
+## Serverbound
 
 Every packet that comes from the server starts with a 3 byte header, which indicates the message
 type. The game converts the Message Type byte to a unicode characters so I will only list the character
@@ -113,7 +113,7 @@ marked as dying.
 
 
 
-## From Client
+## Clientbound
 
 All packets sent from the client contain no headers.
 
