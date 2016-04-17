@@ -117,7 +117,7 @@ marked as dying.
 
 All packets sent from the client contain no headers.
 
-### Packet SetUsername
+### Packet SetUsernameAndSkin
 After clicking Play and receiving the initial response packet, the client sends the following
 packet:
 
@@ -125,7 +125,7 @@ packet:
 |-----|---------|-----------|
 |0|int8|First ID (always 115)|
 |1|int8|Second ID (always 5)|
-|2|int8|A random value in {0, 9} (inclusive) which the client generates and saves|
+|2|int8|Skin ID currently between 0-24 meaning 25 skins available|
 |3-?|string|The client's nickname, if set|
 
 
