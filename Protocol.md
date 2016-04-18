@@ -47,7 +47,7 @@ Most packets start like this:
 |p              |Ping/pong|
 |u              |Food on minimap?|
 |s              |<a href="#type_s_detail">New snake</a>|
-|F              |Related to new food particles spawning|
+|F              |<a href="#type_F_detail">Spawn Food</a>|
 |b,f            |Related to new food particles spawning|
 |c              |Food eaten?|
 |j              |Something related to prey (possibly flying food particles)|
@@ -132,6 +132,20 @@ Topten Entry:
 |4|int8|Font Color|
 |5|int8|Name Lenght|
 |6+(nameLenght)|UserName|
+
+
+<a name="type_F_detail" href="#type_F_detail"><h4>Packets "F" (Spawn Food)</h4></a>
+
+Sends an List of Food
+
+Food Entry:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0|int8|Food Color|
+|1-2|int16|Food x Pos|
+|3-4|int16|Food y Pos|
+|5|int8|Food Size|
 
 
 
