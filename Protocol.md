@@ -139,7 +139,7 @@ marked as dying.
 
 <a name="type_l_detail" href="#type_l_detail"><h4>Packet "l" (Leaderboard)</h4></a>
 
-Packet "m" is required for displaying the leaderboard.
+Packet "l" is required for displaying the leaderboard.
 
 Starting at byte 6 are the top ten players.
 
@@ -159,7 +159,7 @@ snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
 
 <a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global highscore)</h4></a>
 
-Packet "l" is required for displaying the global highscore
+Packet "m" is required for displaying the global highscore
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
