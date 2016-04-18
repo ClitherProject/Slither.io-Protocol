@@ -43,7 +43,7 @@ Most packets start like this:
 |l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |dead/disconnect packet|
 |w              |Add/Remove Sectors (for what are the Sectors???)|
-|m              |Global score|
+|m              |<a href="#type_m_detail">Global score</a>|
 |p              |Ping/pong|
 |u              |Food on minimap?|
 |s              |<a href="#type_s_detail">New snake</a>|
@@ -112,7 +112,7 @@ marked as dying.
 |9-11|int24|snake.fam (value / 16777215) (only if packet is n or N)|
 
 
-<a name="type_l_detail" href="#type_l_detail"><h4>Packets "l" (Leaderboard)</h4></a>
+<a name="type_l_detail" href="#type_l_detail"><h4>Packet "l" (Leaderboard)</h4></a>
 
 Sends the Leaderboard and player rank
 
@@ -127,14 +127,14 @@ Topten Entry:
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|0-1|int16|snake J (used to calculate the lengt)|
-|2-3|int16|snake I(used to calculate the lengt)|
-|4|int8|Font Color|
-|5|int8|Name Lenght|
-|6+(nameLenght)|UserName|
+|0-1|int16|snake J (used to calculate the length)|
+|2-4|int24|snake I(used to calculate the length)|
+|5|int8|Font Color|
+|6|int8|Name length|
+|7+(namelength)|UserName|
 
 
-<a name="type_F_detail" href="#type_F_detail"><h4>Packets "F" (Spawn Food)</h4></a>
+<a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Spawn Food)</h4></a>
 
 Sends an List of Food
 
@@ -148,6 +148,18 @@ Food Entry:
 |5|int8|Food Size|
 
 
+
+<a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global Score)</h4></a>
+
+Sends the Global best Score and Message
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-5|int24|J (used to calculate the length)|
+|6-8|int24|I (used to calculate the length)|
+|9|int8|Message 1 length|
+|10+(message 1 lenght)|string|message 1|
+|?|string|message 2|
 
 
 
