@@ -40,7 +40,7 @@ Most packets start like this:
 |h              |Snake "fam" variable|
 |r              |Maybe snake parts?|
 |g,n,G,N        |<a href="#type_g_detail">Snake update</a>|
-|l              |Leaderboard|
+|l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |dead/disconnect packet|
 |w              |Add/Remove Sectors (for what are the Sectors???)|
 |m              |Global score|
@@ -110,6 +110,32 @@ marked as dying.
 |5-6|int16|New or last nody part x|
 |7-8|int16|New or last body part y|
 |9-11|int24|snake.fam (value / 16777215) (only if packet is n or N)|
+
+
+<a name="type_l_detail" href="#type_l_detail"><h4>Packets "l" (Leaderboard)</h4></a>
+
+Sends the Leaderboard and player rank
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Unkown|
+|4-5|int16|Player Rank|
+|6-7|int16|Player Count|
+|topten|List|List of Topten Players|
+
+Topten Entry:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0-1|int16|snake J (used to calculate the lengt)|
+|2-3|int16|snake I(used to calculate the lengt)|
+|4|int8|Font Color|
+|5|int8|Name Lenght|
+|6+(nameLenght)|UserName|
+
+
+
+
 
 
 
