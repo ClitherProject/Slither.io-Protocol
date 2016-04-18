@@ -36,18 +36,25 @@ Most packets start like this:
 |Type Identifier|Meaning|
 |---------------|-------|
 |a              |<a href="#type_a_detail">Initial setup</a>|
-|e,E,3,4,5      |Unknown|
-|h              |Snake "fam" variable|
+|e              |<a href="#type_e_detail">Update snake direction</a>|
+|E              |Unknown snake movement|
+|3              |Unknown snake movement|
+|4              |Unknown snake movement|
+|5              |Unknown snake movement|
+|h              |<a href="#type_h_detail">Eat food</a>|
 |r              |Maybe snake parts?|
-|g,n,G,N        |<a href="#type_g_detail">Snake update</a>|
+|g              |<a href="#type_g_detail">Update snake position</a>|
+|G              |<a href="#type_G_detail">Update snake parts</a>
+|n              |<a href="#type_n_detail">Unknown snake update</a>
+|N              |<a href="#type_N_detail">Unknown snake update</a>
 |l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |dead/disconnect packet|
 |w              |Add/Remove Sectors (for what are the Sectors???)|
-|m              |<a href="#type_m_detail">Global score</a>|
-|p              |Ping/pong|
+|m              |<a href="#type_m_detail">Global highscore</a>|
+|p              |<a href="#type_p_detail">Pong</a>|
 |u              |Food on minimap?|
 |s              |<a href="#type_s_detail">New snake</a>|
-|F              |<a href="#type_F_detail">Spawn Food</a>|
+|F              |<a href="#type_F_detail">Spawn food</a>|
 |b,f            |Related to new food particles spawning|
 |c              |Food eaten?|
 |j              |Something related to prey (possibly flying food particles)|
@@ -75,6 +82,96 @@ Tells the Client some basic information. After the message arrives, the game cal
 |25|int8|protocol_version|Unknown|
 
 
+<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Update snake direction)</h4></a>
+
+Update local and remote snake direction.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|D (angle)|
+|6|int8|x (unknown value)|
+|7|int8|A (unknown value)|
+
+
+<a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Eat food)</h4></a>
+
+Snake is in near by a food particle. Let the client starts eating animation.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+
+
+<a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Update snake position)</h4></a>
+
+Update local and remote snake position.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5-7|int24|new x position|
+|8-9|int24|new y position|
+
+
+<a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake parts)</h4></a>
+
+Update local and remote snake parts.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+
+<a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Unknown snake update)</h4></a>
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|9-11|int24|snake.fam (value / 16777215)|
+
+
+<a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Unknown snake update)</h4></a>
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|9-11|int24|snake.fam (value / 16777215)|
+
+If the message type is "n" or "N", the snake sct is increased by one. Otherwise, all body parts are
+marked as dying.
+
+
+<a name="type_l_detail" href="#type_l_detail"><h4>Packet "l" (Leaderboard)</h4></a>
+
+Packet "m" is required for displaying the leaderboard.
+
+Starting at byte 6 are the top ten players.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Unkown (value = 0)|
+|4|int8|local players rank|
+|5|int8|players on server count|
+|?-?|int16|J (for snake length calculation)|
+|?-?|int24|I (for snake length calculation)|
+|?-?|int8|font color (between 0 and 8)|
+|?-?|int8|username length|
+|?-?|string|username|
+
+snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
+
+
+<a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global highscore)</h4></a>
+
+Packet "l" is required for displaying the global highscore
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-5|int24|J (for snake length calculation)|
+|6-8|int24|I (for snake length calculation)|
+|9|int8|The length of the winners message|
+|10-?|string|Winners message|
+|?-?|string|Winners username|
+
+snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
+
+
 <a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (New snake)</h4></a>
 The client receives this packet whenever another snake is in range (that is, close enough to be
 drawn on screen).
@@ -98,72 +195,6 @@ drawn on screen).
 |?|int8|Body part position (y)
 The last two bytes repeat for each body part.
 
-<a name="type_g_detail" href="#type_g_detail"><h4>Packets "g", "G", "n", and "N" (Snake
-update)</h4></a>
-
-If the message type is "n" or "N", the snake sct is increased by one. Otherwise, all body parts are
-marked as dying.
-
-|Bytes|Data type|Description|
-|-----|---------|-----------|
-|3-4|int16|Snake id|
-|5-6|int16|New or last nody part x|
-|7-8|int16|New or last body part y|
-|9-11|int24|snake.fam (value / 16777215) (only if packet is n or N)|
-
-
-<a name="type_l_detail" href="#type_l_detail"><h4>Packet "l" (Leaderboard)</h4></a>
-
-Sends the Leaderboard and player rank
-
-|Bytes|Data type|Description|
-|-----|---------|-----------|
-|3|int8|Unkown|
-|4-5|int16|Player Rank|
-|6-7|int16|Player Count|
-|topten|List|List of Topten Players|
-
-Topten Entry:
-
-|Bytes|Data type|Description|
-|-----|---------|-----------|
-|0-1|int16|snake J (used to calculate the length)|
-|2-4|int24|snake I(used to calculate the length)|
-|5|int8|Font Color|
-|6|int8|Name length|
-|7+(namelength)|UserName|
-
-
-<a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Spawn Food)</h4></a>
-
-Sends an List of Food
-
-Food Entry:
-
-|Bytes|Data type|Description|
-|-----|---------|-----------|
-|0|int8|Food Color|
-|1-2|int16|Food x Pos|
-|3-4|int16|Food y Pos|
-|5|int8|Food Size|
-
-
-
-<a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global Score)</h4></a>
-
-Sends the Global best Score and Message
-
-|Bytes|Data type|Description|
-|-----|---------|-----------|
-|3-5|int24|J (used to calculate the length)|
-|6-8|int24|I (used to calculate the length)|
-|9|int8|Message 1 length|
-|10+(message 1 lenght)|string|message 1|
-|?|string|message 2|
-
-
-
-
 
 ## Clientbound
 
@@ -180,6 +211,13 @@ packet:
 |2|int8|Skin ID currently between 0-24 meaning 25 skins available|
 |3-?|string|The client's nickname, if set|
 
+
+### Packet Ping
+Pings the server and ask for new data.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0|int8|Value(always 251)|
 
 ### Packet UpdateOwnSnake
 The client sends this packet to the server when it receives a mouseMove, mouseDown, or mouseUp
