@@ -36,11 +36,11 @@ Most packets start like this:
 |Type Identifier|Meaning|
 |---------------|-------|
 |a              |<a href="#type_a_detail">Initial setup</a>|
-|e              |<a href="#type_e_detail">Update snake direction</a>|
-|E              |Unknown snake movement|
-|3              |Unknown snake movement|
-|4              |Unknown snake movement|
-|5              |Unknown snake movement|
+|e              |<a href="#type_e_detail">body parts movement</a>|
+|E              |body parts movement|
+|3              |body parts movement|
+|4              |body parts movement|
+|5              |body parts movement|
 |h              |<a href="#type_h_detail">Eat food</a>|
 |r              |Maybe snake parts?|
 |g              |<a href="#type_g_detail">Update snake position</a>|
