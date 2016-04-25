@@ -145,7 +145,7 @@ Starting at byte 6 are the top ten players.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|3|int8|Unkown (value = 0)|
+|3|int8|Unknown (value = 0)|
 |4|int8|local players rank|
 |5|int8|players on server count|
 |?-?|int16|J (for snake length calculation)|
