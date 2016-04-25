@@ -225,9 +225,11 @@ event.
 
 |Bytes|Data type|Value|Description|
 |-----|---------|-----|-----------|
-|0|int8|0-250|mouseMove: the angle (currently unknown how the real angle is calculated with this value)|
+|0|int8|0-250|mouseMove: the input angle. Counter-clockwise, (0 and 250 point right, 62 points up)|
 |0|int8|253|onMouseDown: the snake is entering speed mode|
 |0|int8|254|onMouseUp: the snake is leaving speed mode|
+
+angle in radians = value * pi/125
 
 ### Packet SaveVictoryMessage
 When you have the longest snake of the day, you're able to send a victory message.
