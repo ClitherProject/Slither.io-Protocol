@@ -56,7 +56,7 @@ Most packets start like this:
 |s              |<a href="#type_s_detail">New snake</a>|
 |F              |<a href="#type_F_detail">Spawn food</a>|
 |b,f            |Related to new food particles spawning|
-|c              |Food eaten?|
+|c              |<a href="#type_c_detail">Food eaten</a>|
 |j              |Something related to prey (possibly flying food particles)|
 |y              |New prey|
 
@@ -195,14 +195,34 @@ drawn on screen).
 |?|int8|Body part position (y)
 The last two bytes repeat for each body part.
 
+<a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Add Food)</h4></a>
+The food id is calculated with (y * GameRadius * 3) + x
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Color?|
+|4-5|int16|Food X|
+|6-7|int16|Food Y|
+|8-9|int8|value / 5 -> Size|
+
+<a name="type_c_detail" href="#type_c_detail"><h4>Packet "c" (Eat Food)</h4></a>
+The food id is also calculated with (y * GameRadius * 3) + x
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Food X|
+|5-6|int16|Food Y|
+|6-7|int16|Eater snake id|
+
+The packet doesn't always contain the eater snake id, in this case the food was removed for other reasons (?).
+
 
 ## Clientbound
 
 All packets sent from the client contain no headers.
 
 ### Packet SetUsernameAndSkin
-After clicking Play and receiving the initial response packet, the client sends the following
-packet:
+This packet is sent before sending the ping packet to the server. The setup packet will only be sent after receiving this and the ping packet.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
