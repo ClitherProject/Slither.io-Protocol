@@ -240,14 +240,15 @@ Pings the server and ask for new data.
 |0|int8|Value(always 251)|
 
 ### Packet UpdateOwnSnake
-The client sends this packet to the server when it receives a mouseMove, mouseDown, or mouseUp
-event.
+The client sends this packet to the server when it receives a mouseMove, mouseDown, mouseUp, keyDown or keyUp event.
 
 |Bytes|Data type|Value|Description|
 |-----|---------|-----|-----------|
 |0|int8|0-250|mouseMove: the input angle. Counter-clockwise, (0 and 250 point right, 62 points up)|
-|0|int8|253|onMouseDown: the snake is entering speed mode|
-|0|int8|254|onMouseUp: the snake is leaving speed mode|
+|0|int8|252|keyDown, keyUp (left-arrow or right-arrow): start/stop turning left or right|
+|0|int8|253|mouseDown, keyDown (space or up-arrow): the snake is entering speed mode|
+|0|int8|254|mouseUp, keyUp (space or up-arrow): the snake is leaving speed mode|
+|1|int8|0-255|unknown, only used if first byte is 252|
 
 angle in radians = value * pi/125
 
