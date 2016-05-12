@@ -226,9 +226,9 @@ This packet is sent before sending the ping packet to the server. The setup pack
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|0|int8|First ID (always 115)|
-|1|int8|Second ID (always 5)|
-|2|int8|Skin ID currently between 0-24 meaning 25 skins available|
+|0|int8|First ID (always 115 = 's')|
+|1|int8|Second ID (protocolVersion - 1, currently 8-1=7)|
+|2|int8|Skin ID currently between 0-38 meaning 39 skins available|
 |3-?|string|The client's nickname, if set|
 
 
