@@ -48,7 +48,7 @@ Most packets start like this:
 |n              |<a href="#type_n_detail">Unknown snake update</a>
 |N              |<a href="#type_N_detail">Unknown snake update</a>
 |l              |<a href="#type_l_detail">Leaderboard</a>|
-|v              |dead/disconnect packet|
+|v              |<a href="#type_v_detail">dead/disconnect packet</a>|
 |w              |Add/Remove Sectors (for what are the Sectors???)|
 |m              |<a href="#type_m_detail">Global highscore</a>|
 |p              |<a href="#type_p_detail">Pong</a>|
@@ -146,16 +146,24 @@ Starting at byte 6 are the top ten players.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3|int8|Unknown (value = 0)|
-|4|int8|local players rank|
-|5|int8|players on server count|
+|4-5|int16|local players rank|
+|6-7|int16|players on server count|
 |?-?|int16|J (for snake length calculation)|
-|?-?|int24|I (for snake length calculation)|
+|?-?|int24|I (for snake length calculation; value / 16777215)|
 |?-?|int8|font color (between 0 and 8)|
 |?-?|int8|username length|
 |?-?|string|username|
 
 snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
 
+
+<a name="type_v_detail" href="#type_v_detail"><h4>Packet "v" (dead/disconnect packet)</h4></a>
+
+Sent when player died.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|0-2; 0 is normal death, 1 is new highscore of the day, 2 is unknown (disconnect??)|
 
 <a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global highscore)</h4></a>
 
@@ -164,7 +172,7 @@ Packet "m" is required for displaying the global highscore
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-5|int24|J (for snake length calculation)|
-|6-8|int24|I (for snake length calculation)|
+|6-8|int24|I (for snake length calculation; value / 16777215)|
 |9|int8|The length of the winners message|
 |10-?|string|Winners message|
 |?-?|string|Winners username|
