@@ -1,8 +1,7 @@
 # Server List
 
 Slither.io stores its global server list using strange scrambled format.  
-This data can be found here: http://slither.io/i49526.txt  
-Newer versions use the data from here: http://slither.io/i33628.txt, the parsing stays the same.
+This data can be found here: http://slither.io/i33628.txt
 
 ## Parsing
 After some time reverse-engineering the javascript code I found the algorithm.

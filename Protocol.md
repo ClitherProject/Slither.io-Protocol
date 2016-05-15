@@ -1,4 +1,6 @@
-# Slither.io Protocol Version 6
+# Slither.io Protocol Version 8  
+
+Note: all values are unsigned.
 
 ## Serverbound
 
@@ -44,16 +46,17 @@ Most packets start like this:
 |h              |<a href="#type_h_detail">Eat food</a>|
 |r              |Maybe snake parts?|
 |g              |<a href="#type_g_detail">Update snake position</a>|
-|G              |<a href="#type_G_detail">Update snake parts</a>
-|n              |<a href="#type_n_detail">Unknown snake update</a>
-|N              |<a href="#type_N_detail">Unknown snake update</a>
+|G              |<a href="#type_G_detail">Update snake parts</a>|
+|n              |<a href="#type_n_detail">Unknown snake update</a>|
+|N              |<a href="#type_N_detail">Unknown snake update</a>|
 |l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |<a href="#type_v_detail">dead/disconnect packet</a>|
-|w              |Add/Remove Sectors (for what are the Sectors???)|
+|W              |<a href="#type_W_detail">Add Sector</a>|
+|w              |<a href="#type_w_detail">Remove Sector</a>|
 |m              |<a href="#type_m_detail">Global highscore</a>|
 |p              |<a href="#type_p_detail">Pong</a>|
 |u              |Food on minimap?|
-|s              |<a href="#type_s_detail">New snake</a>|
+|s              |<a href="#type_s_detail">Add/remove Snake</a>|
 |F              |<a href="#type_F_detail">Spawn food</a>|
 |b,f            |Related to new food particles spawning|
 |c              |<a href="#type_c_detail">Food eaten</a>|
@@ -109,8 +112,8 @@ Update local and remote snake position.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-7|int24|new x position|
-|8-9|int24|new y position|
+|5-6|int16|new x position|
+|7-8|int16|new y position|
 
 
 <a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake parts)</h4></a>
@@ -145,7 +148,7 @@ Starting at byte 6 are the top ten players.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|3|int8|Unknown (value = 0)|
+|3|int8|local players rank in leaderboard (0 means not in leaderboard, otherwise this is equal to the "local players rank". Actually always redundant information)|
 |4-5|int16|local players rank|
 |6-7|int16|players on server count|
 |?-?|int16|J (for snake length calculation)|
@@ -165,6 +168,26 @@ Sent when player died.
 |-----|---------|-----------|
 |3|int8|0-2; 0 is normal death, 1 is new highscore of the day, 2 is unknown (disconnect??)|
 
+
+<a name="type_W_detail" href="#type_W_detail"><h4>Packet "W" (Add Sector)</h4></a>
+
+Sent when a new Sector becomes active for the client.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|x-coordinate of the new sector|
+|4|int8|y-coordinate of the new sector|
+
+<a name="type_w_detail" href="#type_w_detail"><h4>Packet "w" (Remove Sector)</h4></a>
+
+Sent when a Sector should be unloaded.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|x-coordinate of the sector|
+|4|int8|y-coordinate of the sector|
+
+
 <a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global highscore)</h4></a>
 
 Packet "m" is required for displaying the global highscore
@@ -173,16 +196,26 @@ Packet "m" is required for displaying the global highscore
 |-----|---------|-----------|
 |3-5|int24|J (for snake length calculation)|
 |6-8|int24|I (for snake length calculation; value / 16777215)|
-|9|int8|The length of the winners message|
-|10-?|string|Winners message|
-|?-?|string|Winners username|
+|9|int8|The length of the winners name|
+|10-?|string|Winners name|
+|?-?|string|Winners message|
 
 snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
 
 
-<a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (New snake)</h4></a>
-The client receives this packet whenever another snake is in range (that is, close enough to be
-drawn on screen).
+<a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (Add/remove Snake)</h4></a>
+
+#####Variant 1: package-size = 6#####
+Sent when another snake leaves range (that is, close enough to be
+drawn on screen) or dies.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|0 (snake left range) or 1 (snake died)|
+
+#####Variant 2: package-size >= 31 #####
+Sent when another snake enters range.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -196,12 +229,13 @@ drawn on screen).
 |18-20|int24|value/ 5  snake X pos|
 |21-23|int24|value / 5 snake Y pos|
 |24|int8|Name length|
-|25+Name length|string|Snake nickname
-|?|int24|Possibly head position (x)
-|?|int24|Possibly head position (y)
-|?|int8|Body part position (x)
-|?|int8|Body part position (y)
+|25+Name length|string|Snake nickname|
+|?|int24|Possibly head position (x)|
+|?|int24|Possibly head position (y)|
+|?|int8|Body part position (x)|
+|?|int8|Body part position (y)|
 The last two bytes repeat for each body part.
+
 
 <a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Add Food)</h4></a>
 The food id is calculated with (y * GameRadius * 3) + x
@@ -211,7 +245,8 @@ The food id is calculated with (y * GameRadius * 3) + x
 |3|int8|Color?|
 |4-5|int16|Food X|
 |6-7|int16|Food Y|
-|8-9|int8|value / 5 -> Size|
+|8|int8|value / 5 -> Size|
+One packet can contain more than one food-entity, bytes 3-8 (=6 bytes!) repeat for every entity.
 
 <a name="type_c_detail" href="#type_c_detail"><h4>Packet "c" (Eat Food)</h4></a>
 The food id is also calculated with (y * GameRadius * 3) + x
@@ -220,7 +255,7 @@ The food id is also calculated with (y * GameRadius * 3) + x
 |-----|---------|-----------|
 |3-4|int16|Food X|
 |5-6|int16|Food Y|
-|6-7|int16|Eater snake id|
+|7-8|int16|Eater snake id|
 
 The packet doesn't always contain the eater snake id, in this case the food was removed for other reasons (?).
 
