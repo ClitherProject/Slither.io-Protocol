@@ -55,10 +55,11 @@ Most packets start like this:
 |w              |<a href="#type_w_detail">Remove Sector</a>|
 |m              |<a href="#type_m_detail">Global highscore</a>|
 |p              |<a href="#type_p_detail">Pong</a>|
-|u              |Food on minimap?|
+|u              |<a href="#type_u_detail">Update minimap</a>|
 |s              |<a href="#type_s_detail">Add/remove Snake</a>|
-|F              |<a href="#type_F_detail">Spawn food</a>|
-|b,f            |Related to new food particles spawning|
+|F              |<a href="#type_F_detail">Add Food</a>|
+|b              |<a href="#type_b_detail">Add Food</a>|
+|f              |<a href="#type_f_detail">Add Food</a>|
 |c              |<a href="#type_c_detail">Food eaten</a>|
 |j              |Something related to prey (possibly flying food particles)|
 |y              |New prey|
@@ -203,9 +204,24 @@ Packet "m" is required for displaying the global highscore
 snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
 
 
+<a name="type_u_detail" href="#type_u_detail"><h4>Packet "u" (Update minimap)</h4></a>
+
+Sent when the minimap is updated.
+
+Hints for parsing the data:
+* The minimap has a size of 80*80
+* Start at the top-left, go to the right, when at the right, repeat for the next row and so on
+* Start reading the packet at index 3
+* Read one byte:
+    * value >= 128: skip (value - 128) pixels
+    * value < 128: repeat for every bit (from the 64-bit to the 1-bit):
+        * if set, paint the current pixel
+        * go to the next pixel
+
+
 <a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (Add/remove Snake)</h4></a>
 
-#####Variant 1: package-size = 6#####
+##### Variant 1: packet-size = 6
 Sent when another snake leaves range (that is, close enough to be
 drawn on screen) or dies.
 
@@ -214,7 +230,7 @@ drawn on screen) or dies.
 |3-4|int16|Snake id|
 |5|int8|0 (snake left range) or 1 (snake died)|
 
-#####Variant 2: package-size >= 31 #####
+##### Variant 2: packet-size >= 31
 Sent when another snake enters range.
 
 |Bytes|Data type|Description|
@@ -238,7 +254,8 @@ The last two bytes repeat for each body part.
 
 
 <a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Add Food)</h4></a>
-The food id is calculated with (y * GameRadius * 3) + x
+
+Sent when food that existed before enters range.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -247,6 +264,37 @@ The food id is calculated with (y * GameRadius * 3) + x
 |6-7|int16|Food Y|
 |8|int8|value / 5 -> Size|
 One packet can contain more than one food-entity, bytes 3-8 (=6 bytes!) repeat for every entity.
+
+The food id is calculated with (y * GameRadius * 3) + x
+
+
+<a name="type_b_detail" href="#type_b_detail"><h4>Packet "b" (Add Food)</h4></a>
+
+Sent when food is created while in range (because of turbo or the death of a snake).
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Color?|
+|4-5|int16|Food X|
+|6-7|int16|Food Y|
+|8|int8|value / 5 -> Size|
+
+The food id is calculated with (y * GameRadius * 3) + x
+
+
+<a name="type_f_detail" href="#type_f_detail"><h4>Packet "f" (Add Food)</h4></a>
+
+Sent when natural food spawns while in range.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Color?|
+|4-5|int16|Food X|
+|6-7|int16|Food Y|
+|8|int8|value / 5 -> Size|
+
+The food id is calculated with (y * GameRadius * 3) + x
+
 
 <a name="type_c_detail" href="#type_c_detail"><h4>Packet "c" (Eat Food)</h4></a>
 The food id is also calculated with (y * GameRadius * 3) + x
