@@ -75,7 +75,7 @@ Tells the Client some basic information. After the message arrives, the game cal
 |3-5|int24|Game Radius|21600|
 |6-7|int16|setMscps(value)? setMscps is used to fill the arrays fmlts and fpsls. But IDK for what they are.|411|
 |8-9|int16|sector_size|480|
-|10-11|int16|sector_count_along_edge|130|
+|10-11|int16|sector_count_along_edge (unused in the game-code)|130|
 |12|int8|spangdv (value / 10)|4.8|
 |13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|
 |15-16|int16|nsp2 (value / 100)|0.5|
