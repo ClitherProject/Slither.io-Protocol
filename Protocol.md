@@ -1,4 +1,6 @@
-# Slither.io Protocol Version 6
+# Slither.io Protocol Version 8  
+
+Note: all values are unsigned.
 
 ## Serverbound
 
@@ -44,21 +46,23 @@ Most packets start like this:
 |h              |<a href="#type_h_detail">Eat food</a>|
 |r              |Maybe snake parts?|
 |g              |<a href="#type_g_detail">Update snake position</a>|
-|G              |<a href="#type_G_detail">Update snake parts</a>
-|n              |<a href="#type_n_detail">Unknown snake update</a>
-|N              |<a href="#type_N_detail">Unknown snake update</a>
+|G              |<a href="#type_G_detail">Update snake parts</a>|
+|n              |<a href="#type_n_detail">Unknown snake update</a>|
+|N              |<a href="#type_N_detail">Unknown snake update</a>|
 |l              |<a href="#type_l_detail">Leaderboard</a>|
-|v              |dead/disconnect packet|
-|w              |Add/Remove Sectors (for what are the Sectors???)|
+|v              |<a href="#type_v_detail">dead/disconnect packet</a>|
+|W              |<a href="#type_W_detail">Add Sector</a>|
+|w              |<a href="#type_w_detail">Remove Sector</a>|
 |m              |<a href="#type_m_detail">Global highscore</a>|
 |p              |<a href="#type_p_detail">Pong</a>|
-|u              |Food on minimap?|
-|s              |<a href="#type_s_detail">New snake</a>|
-|F              |<a href="#type_F_detail">Spawn food</a>|
-|b,f            |Related to new food particles spawning|
+|u              |<a href="#type_u_detail">Update minimap</a>|
+|s              |<a href="#type_s_detail">Add/remove Snake</a>|
+|F              |<a href="#type_F_detail">Add Food</a>|
+|b              |<a href="#type_b_detail">Add Food</a>|
+|f              |<a href="#type_f_detail">Add Food</a>|
 |c              |<a href="#type_c_detail">Food eaten</a>|
-|j              |Something related to prey (possibly flying food particles)|
-|y              |New prey|
+|j              |<a href="#type_j_detail">Update Prey</a>|
+|y              |<a href="#type_y_detail">Add/remove Prey</a>|
 
 
 
@@ -71,13 +75,13 @@ Tells the Client some basic information. After the message arrives, the game cal
 |3-5|int24|Game Radius|21600|
 |6-7|int16|setMscps(value)? setMscps is used to fill the arrays fmlts and fpsls. But IDK for what they are.|411|
 |8-9|int16|sector_size|480|
-|10-11|int16|sector_count_along_edge|130|
+|10-11|int16|sector_count_along_edge (unused in the game-code)|130|
 |12|int8|spangdv (value / 10)|4.8|
 |13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|
 |15-16|int16|nsp2 (value / 100)|0.5|
 |17-18|int16|nsp3 (value / 100)|12|
 |19-20|int16|mamu (value / 1E3)|0.033|
-|21-22|int16|manu2 (value / 1E3)|0.028|
+|21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|
 |23-24|int16|cst (value / 1E3)|0.43|
 |25|int8|protocol_version|Unknown|
 
@@ -109,8 +113,8 @@ Update local and remote snake position.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-7|int24|new x position|
-|8-9|int24|new y position|
+|5-6|int16|new x position|
+|7-8|int16|new y position|
 
 
 <a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake parts)</h4></a>
@@ -145,16 +149,44 @@ Starting at byte 6 are the top ten players.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|3|int8|Unknown (value = 0)|
-|4|int8|local players rank|
-|5|int8|players on server count|
+|3|int8|local players rank in leaderboard (0 means not in leaderboard, otherwise this is equal to the "local players rank". Actually always redundant information)|
+|4-5|int16|local players rank|
+|6-7|int16|players on server count|
 |?-?|int16|J (for snake length calculation)|
-|?-?|int24|I (for snake length calculation)|
+|?-?|int24|I (for snake length calculation; value / 16777215)|
 |?-?|int8|font color (between 0 and 8)|
 |?-?|int8|username length|
 |?-?|string|username|
 
 snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
+
+
+<a name="type_v_detail" href="#type_v_detail"><h4>Packet "v" (dead/disconnect packet)</h4></a>
+
+Sent when player died.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|0-2; 0 is normal death, 1 is new highscore of the day, 2 is unknown (disconnect??)|
+
+
+<a name="type_W_detail" href="#type_W_detail"><h4>Packet "W" (Add Sector)</h4></a>
+
+Sent when a new Sector becomes active for the client.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|x-coordinate of the new sector|
+|4|int8|y-coordinate of the new sector|
+
+<a name="type_w_detail" href="#type_w_detail"><h4>Packet "w" (Remove Sector)</h4></a>
+
+Sent when a Sector should be unloaded.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|x-coordinate of the sector|
+|4|int8|y-coordinate of the sector|
 
 
 <a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global highscore)</h4></a>
@@ -164,46 +196,105 @@ Packet "m" is required for displaying the global highscore
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-5|int24|J (for snake length calculation)|
-|6-8|int24|I (for snake length calculation)|
-|9|int8|The length of the winners message|
-|10-?|string|Winners message|
-|?-?|string|Winners username|
+|6-8|int24|I (for snake length calculation; value / 16777215)|
+|9|int8|The length of the winners name|
+|10-?|string|Winners name|
+|?-?|string|Winners message|
 
 snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
 
 
-<a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (New snake)</h4></a>
-The client receives this packet whenever another snake is in range (that is, close enough to be
-drawn on screen).
+<a name="type_u_detail" href="#type_u_detail"><h4>Packet "u" (Update minimap)</h4></a>
+
+Sent when the minimap is updated.
+
+Hints for parsing the data:
+* The minimap has a size of 80*80
+* Start at the top-left, go to the right, when at the right, repeat for the next row and so on
+* Start reading the packet at index 3
+* Read one byte:
+    * value >= 128: skip (value - 128) pixels
+    * value < 128: repeat for every bit (from the 64-bit to the 1-bit):
+        * if set, paint the current pixel
+        * go to the next pixel
+
+
+<a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (Add/remove Snake)</h4></a>
+
+##### Variant 1: packet-size = 6
+Sent when another snake leaves range (that is, close enough to be
+drawn on screen) or dies.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-7|int24|Snake stop? value * Math.PI / 16777215|
+|5|int8|0 (snake left range) or 1 (snake died)|
+
+##### Variant 2: packet-size >= 31
+Sent when another snake enters range.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5-7|int24|Snake stop? value * 2*Math.PI / 16777215|
 |8|int8|Unused. The 8. Byte is Unused in the game code. But the Server sends it filled with a value. Maybe we miss something here?|
-|9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
+|9-11|int24|value * 2*Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
 |12-13|int16|value / 1E3 current speed of snake|
 |14-16|int24|value / 16777215|
 |17|int8|Snake skin (between 9 or 0? and 21)|
 |18-20|int24|value/ 5  snake X pos|
 |21-23|int24|value / 5 snake Y pos|
 |24|int8|Name length|
-|25+Name length|string|Snake nickname
-|?|int24|Possibly head position (x)
-|?|int24|Possibly head position (y)
-|?|int8|Body part position (x)
-|?|int8|Body part position (y)
+|25+Name length|string|Snake nickname|
+|?|int24|Possibly head position (x)|
+|?|int24|Possibly head position (y)|
+|?|int8|Body part position (x)|
+|?|int8|Body part position (y)|
 The last two bytes repeat for each body part.
 
+
 <a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Add Food)</h4></a>
-The food id is calculated with (y * GameRadius * 3) + x
+
+Sent when food that existed before enters range.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3|int8|Color?|
 |4-5|int16|Food X|
 |6-7|int16|Food Y|
-|8-9|int8|value / 5 -> Size|
+|8|int8|value / 5 -> Size|
+One packet can contain more than one food-entity, bytes 3-8 (=6 bytes!) repeat for every entity.
+
+The food id is calculated with (y * GameRadius * 3) + x
+
+
+<a name="type_b_detail" href="#type_b_detail"><h4>Packet "b" (Add Food)</h4></a>
+
+Sent when food is created while in range (because of turbo or the death of a snake).
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Color?|
+|4-5|int16|Food X|
+|6-7|int16|Food Y|
+|8|int8|value / 5 -> Size|
+
+The food id is calculated with (y * GameRadius * 3) + x
+
+
+<a name="type_f_detail" href="#type_f_detail"><h4>Packet "f" (Add Food)</h4></a>
+
+Sent when natural food spawns while in range.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3|int8|Color?|
+|4-5|int16|Food X|
+|6-7|int16|Food Y|
+|8|int8|value / 5 -> Size|
+
+The food id is calculated with (y * GameRadius * 3) + x
+
 
 <a name="type_c_detail" href="#type_c_detail"><h4>Packet "c" (Eat Food)</h4></a>
 The food id is also calculated with (y * GameRadius * 3) + x
@@ -212,9 +303,72 @@ The food id is also calculated with (y * GameRadius * 3) + x
 |-----|---------|-----------|
 |3-4|int16|Food X|
 |5-6|int16|Food Y|
-|6-7|int16|Eater snake id|
+|7-8|int16|Eater snake id|
 
 The packet doesn't always contain the eater snake id, in this case the food was removed for other reasons (?).
+
+
+<a name="type_j_detail" href="#type_j_detail"><h4>Packet "j" (Update Prey)</h4></a>
+
+Sent when prey ("flying particles") is updated.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+|5-6|int16|value * 3 + 1 -> x|
+|7-8|int16|value * 3 + 1 -> y|
+
+Next follow updates for one or more of these variables:
+
+|Data type|Description|
+|---------|-----------|
+|int8|value - 48 -> direction (0: not turning; 1: turning counter-clockwise; 2: turning clockwise)|
+|int24|value * 2*PI / 16777215 -> current angle|
+|int24|value * 2*PI / 16777215 -> wanted angle (angle the prey turns towards)|
+|int16|value / 1000 -> speed|
+
+Depending on the packet-length, different variables are sent:
+
+|packet-length|variables sent (in that exact order)|
+|-------------|------------------------------------|
+|11|speed|
+|12|current angle|
+|13|direction, wanted angle|
+|14|current angle, speed|
+|15|direction, wanted angle, speed|
+|16|direction, current angle, wanted angle|
+|18|direction, current angle, wanted angle, speed|
+
+
+<a name="type_y_detail" href="#type_y_detail"><h4>Packet "y" (Add/remove Prey)</h4></a>
+
+Sent when a Prey enters range / spawns or leaves range / gets eaten.
+The exact event/format depends on the packet-length:
+
+##### packet-length 5: remove Prey
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+
+##### packet-length 7: eat Prey
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+|5-6|int16|Eater snake ID|
+
+##### packet-length 22: eat Prey
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+|5|int8|color ID|
+|6-8|int24|value / 5 -> x|
+|9-11|int24|value / 5 -> y|
+|12|int8|value / 5 -> size|
+|13|int8|value - 48 -> direction (see packet "j")|
+|14-16|int24|value * 2*PI / 16777215 -> wanted angle|
+|17-19|int24|value * 2*PI / 16777215 -> current angle|
+|20-21|int16|value / 1000 -> speed|
+
 
 
 ## Clientbound
@@ -226,9 +380,9 @@ This packet is sent before sending the ping packet to the server. The setup pack
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|0|int8|First ID (always 115)|
-|1|int8|Second ID (always 5)|
-|2|int8|Skin ID currently between 0-24 meaning 25 skins available|
+|0|int8|First ID (always 115 = 's')|
+|1|int8|Second ID (protocolVersion - 1, currently 8-1=7)|
+|2|int8|Skin ID currently between 0-38 meaning 39 skins available|
 |3-?|string|The client's nickname, if set|
 
 
@@ -240,14 +394,15 @@ Pings the server and ask for new data.
 |0|int8|Value(always 251)|
 
 ### Packet UpdateOwnSnake
-The client sends this packet to the server when it receives a mouseMove, mouseDown, or mouseUp
-event.
+The client sends this packet to the server when it receives a mouseMove, mouseDown, mouseUp, keyDown or keyUp event.
 
 |Bytes|Data type|Value|Description|
 |-----|---------|-----|-----------|
 |0|int8|0-250|mouseMove: the input angle. Counter-clockwise, (0 and 250 point right, 62 points up)|
-|0|int8|253|onMouseDown: the snake is entering speed mode|
-|0|int8|254|onMouseUp: the snake is leaving speed mode|
+|0|int8|252|keyDown, keyUp (left-arrow or right-arrow): start/stop turning left or right|
+|0|int8|253|mouseDown, keyDown (space or up-arrow): the snake is entering speed mode|
+|0|int8|254|mouseUp, keyUp (space or up-arrow): the snake is leaving speed mode|
+|1|int8|0-255|unknown, only used if first byte is 252|
 
 angle in radians = value * pi/125
 
