@@ -44,7 +44,7 @@ Most packets start like this:
 |4              |body parts movement|
 |5              |body parts movement|
 |h              |<a href="#type_h_detail">Eat food</a>|
-|r              |Maybe snake parts?|
+|r              |<a href="#type_r_detail">Remove snake part</a>|
 |g              |<a href="#type_g_detail">Update snake position</a>|
 |G              |<a href="#type_G_detail">Update snake parts</a>|
 |n              |<a href="#type_n_detail">Unknown snake update</a>|
@@ -105,6 +105,23 @@ Snake is in near by a food particle. Let the client starts eating animation.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 
+
+<a name="type_r_detail" href="#type_r_detail"><h4>Packet "r" (Remove snake part)</h4></a>
+
+Removes the last part from this snake.
+
+##### Variant 1: packet-size = 5
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+
+##### Variant 2: packet-size = 8
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5-7|int24|snake.fam (value / 16777215))|
 
 <a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Update snake position)</h4></a>
 
