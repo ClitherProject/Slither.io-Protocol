@@ -61,8 +61,8 @@ Most packets start like this:
 |b              |<a href="#type_b_detail">Add Food</a>|
 |f              |<a href="#type_f_detail">Add Food</a>|
 |c              |<a href="#type_c_detail">Food eaten</a>|
-|j              |Something related to prey (possibly flying food particles)|
-|y              |New prey|
+|j              |<a href="#type_j_detail">Update Prey</a>|
+|y              |<a href="#type_y_detail">Add/remove Prey</a>|
 
 
 
@@ -75,13 +75,13 @@ Tells the Client some basic information. After the message arrives, the game cal
 |3-5|int24|Game Radius|21600|
 |6-7|int16|setMscps(value)? setMscps is used to fill the arrays fmlts and fpsls. But IDK for what they are.|411|
 |8-9|int16|sector_size|480|
-|10-11|int16|sector_count_along_edge|130|
+|10-11|int16|sector_count_along_edge (unused in the game-code)|130|
 |12|int8|spangdv (value / 10)|4.8|
 |13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|
 |15-16|int16|nsp2 (value / 100)|0.5|
 |17-18|int16|nsp3 (value / 100)|12|
 |19-20|int16|mamu (value / 1E3)|0.033|
-|21-22|int16|manu2 (value / 1E3)|0.028|
+|21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|
 |23-24|int16|cst (value / 1E3)|0.43|
 |25|int8|protocol_version|Unknown|
 
@@ -236,9 +236,9 @@ Sent when another snake enters range.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-7|int24|Snake stop? value * Math.PI / 16777215|
+|5-7|int24|Snake stop? value * 2*Math.PI / 16777215|
 |8|int8|Unused. The 8. Byte is Unused in the game code. But the Server sends it filled with a value. Maybe we miss something here?|
-|9-11|int24|value * Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
+|9-11|int24|value * 2*Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
 |12-13|int16|value / 1E3 current speed of snake|
 |14-16|int24|value / 16777215|
 |17|int8|Snake skin (between 9 or 0? and 21)|
@@ -306,6 +306,69 @@ The food id is also calculated with (y * GameRadius * 3) + x
 |7-8|int16|Eater snake id|
 
 The packet doesn't always contain the eater snake id, in this case the food was removed for other reasons (?).
+
+
+<a name="type_j_detail" href="#type_j_detail"><h4>Packet "j" (Update Prey)</h4></a>
+
+Sent when prey ("flying particles") is updated.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+|5-6|int16|value * 3 + 1 -> x|
+|7-8|int16|value * 3 + 1 -> y|
+
+Next follow updates for one or more of these variables:
+
+|Data type|Description|
+|---------|-----------|
+|int8|value - 48 -> direction (0: not turning; 1: turning counter-clockwise; 2: turning clockwise)|
+|int24|value * 2*PI / 16777215 -> current angle|
+|int24|value * 2*PI / 16777215 -> wanted angle (angle the prey turns towards)|
+|int16|value / 1000 -> speed|
+
+Depending on the packet-length, different variables are sent:
+
+|packet-length|variables sent (in that exact order)|
+|-------------|------------------------------------|
+|11|speed|
+|12|current angle|
+|13|direction, wanted angle|
+|14|current angle, speed|
+|15|direction, wanted angle, speed|
+|16|direction, current angle, wanted angle|
+|18|direction, current angle, wanted angle, speed|
+
+
+<a name="type_y_detail" href="#type_y_detail"><h4>Packet "y" (Add/remove Prey)</h4></a>
+
+Sent when a Prey enters range / spawns or leaves range / gets eaten.
+The exact event/format depends on the packet-length:
+
+##### packet-length 5: remove Prey
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+
+##### packet-length 7: eat Prey
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+|5-6|int16|Eater snake ID|
+
+##### packet-length 22: eat Prey
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Prey ID|
+|5|int8|color ID|
+|6-8|int24|value / 5 -> x|
+|9-11|int24|value / 5 -> y|
+|12|int8|value / 5 -> size|
+|13|int8|value - 48 -> direction (see packet "j")|
+|14-16|int24|value * 2*PI / 16777215 -> wanted angle|
+|17-19|int24|value * 2*PI / 16777215 -> current angle|
+|20-21|int16|value / 1000 -> speed|
+
 
 
 ## Clientbound
