@@ -63,6 +63,7 @@ Most packets start like this:
 |c              |<a href="#type_c_detail">Food eaten</a>|
 |j              |<a href="#type_j_detail">Update Prey</a>|
 |y              |<a href="#type_y_detail">Add/remove Prey</a>|
+|k              |<a href="#type_k_detail">Kill (unused in the game-code)</a>|
 
 
 
@@ -373,7 +374,7 @@ The exact event/format depends on the packet-length:
 |3-4|int16|Prey ID|
 |5-6|int16|Eater snake ID|
 
-##### packet-length 22: eat Prey
+##### packet-length 22: add Prey
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Prey ID|
@@ -385,6 +386,17 @@ The exact event/format depends on the packet-length:
 |14-16|int24|value * 2*PI / 16777215 -> wanted angle|
 |17-19|int24|value * 2*PI / 16777215 -> current angle|
 |20-21|int16|value / 1000 -> speed|
+
+
+<a name="type_k_detail" href="#type_k_detail"><h4>Packet "k" (Kill)</h4></a>
+Note: this packet is (currently) unused in the original client, so I can only guess what the variables mean.
+
+Sent when another snake dies by running into the player; not sent when the killer isn't the local player.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|killer snake id|
+|5-7|int24|total number of kills|
 
 
 
