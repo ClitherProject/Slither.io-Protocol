@@ -43,7 +43,7 @@ Most packets start like this:
 |3              |body parts movement|
 |4              |body parts movement|
 |5              |body parts movement|
-|h              |<a href="#type_h_detail">Eat food</a>|
+|h              |<a href="#type_h_detail">Update snake fam</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
 |g              |<a href="#type_g_detail">Update snake body</a>|
 |G              |<a href="#type_G_detail">Update snake body</a>|
@@ -99,12 +99,14 @@ Update local and remote snake direction.
 |7|int8|A (unknown value)|
 
 
-<a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Eat food)</h4></a>
+<a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Update fam)</h4></a>
 
-Snake is in near by a food particle. Let the client starts eating animation.
+Update the fam-value (used for length-calculation) of a snake.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
+|3-4|int16|Snake id|
+|5-7|int24|value / 16777215 -> fam|
 
 
 <a name="type_r_detail" href="#type_r_detail"><h4>Packet "r" (Remove snake part)</h4></a>
