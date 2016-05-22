@@ -45,10 +45,10 @@ Most packets start like this:
 |5              |body parts movement|
 |h              |<a href="#type_h_detail">Eat food</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
-|g              |<a href="#type_g_detail">Update snake position</a>|
-|G              |<a href="#type_G_detail">Update snake parts</a>|
-|n              |<a href="#type_n_detail">Unknown snake update</a>|
-|N              |<a href="#type_N_detail">Unknown snake update</a>|
+|g              |<a href="#type_g_detail">Update snake body</a>|
+|G              |<a href="#type_G_detail">Update snake body</a>|
+|n              |<a href="#type_n_detail">Update snake body</a>|
+|N              |<a href="#type_N_detail">Update snake body</a>|
 |l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |<a href="#type_v_detail">dead/disconnect packet</a>|
 |W              |<a href="#type_W_detail">Add Sector</a>|
@@ -124,39 +124,50 @@ Removes the last part from this snake.
 |3-4|int16|Snake id|
 |5-7|int24|snake.fam (value / 16777215))|
 
-<a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Update snake position)</h4></a>
+<a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Update snake body)</h4></a>
 
-Update local and remote snake position.
+One body-part is being added at the front, one is being removed at the back.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-6|int16|new x position|
-|7-8|int16|new y position|
+|5-6|int16|x|
+|7-8|int16|y|
 
 
-<a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake parts)</h4></a>
+<a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake body)</h4></a>
 
-Update local and remote snake parts.
-
-|Bytes|Data type|Description|
-|-----|---------|-----------|
-
-<a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Unknown snake update)</h4></a>
+One body-part is being added at the front, one is being removed at the back.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|9-11|int24|snake.fam (value / 16777215)|
+|3-4|int16|Snake id|
+|5|int8|value - 128 + head.x -> x|
+|6|int8|value - 128 + head.y -> y|
 
 
-<a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Unknown snake update)</h4></a>
+<a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Update snake body)</h4></a>
+
+One body-part is being added at the front, none is being removed. The fam-value is updated.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|9-11|int24|snake.fam (value / 16777215)|
+|3-4|int16|Snake id|
+|5-6|int16|x|
+|7-8|int16|y|
+|9-11|int24|value / 16777215 -> fam|
 
-If the message type is "n" or "N", the snake sct is increased by one. Otherwise, all body parts are
-marked as dying.
+
+<a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Update snake body)</h4></a>
+
+One body-part is being added at the front, none is being removed. The fam-value is updated.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|value - 128 + head.x -> x|
+|6|int8|value - 128 + head.y -> y|
+|7-9|int24|value / 16777215 -> fam|
 
 
 <a name="type_l_detail" href="#type_l_detail"><h4>Packet "l" (Leaderboard)</h4></a>
