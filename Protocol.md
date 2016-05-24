@@ -47,8 +47,8 @@ Most packets start like this:
 |r              |<a href="#type_r_detail">Remove snake part</a>|
 |g              |<a href="#type_g_detail">Move snake</a>|
 |G              |<a href="#type_G_detail">Move snake</a>|
-|n              |<a href="#type_n_detail">Move snake</a>|
-|N              |<a href="#type_N_detail">Move snake</a>|
+|n              |<a href="#type_n_detail">Increase snake</a>|
+|N              |<a href="#type_N_detail">Increase snake</a>|
 |l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |<a href="#type_v_detail">dead/disconnect packet</a>|
 |W              |<a href="#type_W_detail">Add Sector</a>|
@@ -126,7 +126,7 @@ Removes the last part from this snake.
 |3-4|int16|Snake id|
 |5-7|int24|snake.fam (value / 16777215))|
 
-<a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Update snake body)</h4></a>
+<a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Move snake)</h4></a>
 
 Move snake into new position.
 
@@ -137,7 +137,7 @@ Move snake into new position.
 |7-8|int16|y|
 
 
-<a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake body)</h4></a>
+<a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Move snake)</h4></a>
 
 Move snake into new position.
 
@@ -148,9 +148,9 @@ Move snake into new position.
 |6|int8|value - 128 + head.y -> y|
 
 
-<a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Update snake body)</h4></a>
+<a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Increase snake)</h4></a>
 
-Move a snake into new position and increase snake body
+Move snake into new position and increase snake body
 length by 1 body-part. The fam-value is updated.
 
 |Bytes|Data type|Description|
@@ -161,9 +161,9 @@ length by 1 body-part. The fam-value is updated.
 |9-11|int24|value / 16777215 -> fam|
 
 
-<a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Update snake body)</h4></a>
+<a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Increase snake)</h4></a>
 
-Move a snake into new position and increase snake body
+Move snake into new position and increase snake body
 length by 1 body-part. The fam-value is updated.
 
 |Bytes|Data type|Description|
