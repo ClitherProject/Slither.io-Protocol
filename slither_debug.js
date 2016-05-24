@@ -272,6 +272,36 @@ if (!String.prototype.format) {
         ctx.stroke();
     };
 
+    var packetTypes = {
+        a: "Initial setup",
+        e: "Snake rotation (?dir ang ?wang ?sp)",
+        E: "Snake rotation counterclockwise (dir wang ?sp)",
+        3: "Snake rotation counterclockwise (dir ang wang",
+        4: "Snake rotation clockwise (dir wang ?sp)",
+        5: "Snake rotation clockwise (dir ang wang)",
+        h: "Update snake fam",
+        r: "Remove snake part",
+        g: "Move snake",
+        G: "Move snake",
+        n: "Increase snake",
+        N: "Increase snake",
+        l: "Leaderboard",
+        v: "dead/disconnect packet",
+        W: "Add Sector",
+        w: "Remove Sector",
+        m: "Global highscore",
+        p: "Pong",
+        u: "Update minimap",
+        s: "Add/remove Snake",
+        F: "Add Food",
+        b: "Add Food",
+        f: "Add Food",
+        c: "Food eaten",
+        j: "Update Prey",
+        y: "Add/remove Prey",
+        k: "Kill (unused in the game-code)"
+    };
+
     var ssgOriginal = window.startShowGame;
     window.startShowGame = function() {
         ssgOriginal();
@@ -292,15 +322,15 @@ if (!String.prototype.format) {
                 var packetType = String.fromCharCode(c[2]); // packet type
                 i = 3; // next byte
 
-                var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
-
                 if ("g" == packetType || "n" == packetType || "G" == packetType || "N" == packetType) {
+                    var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
+                    var snake = os["s" + snakeId]; // snake
+
                     if (3 <= protocol_version) {
                         if ("g" == packetType || "n" == packetType) {
                             xx = c[i] << 8 | c[i + 1]; i += 2;
                             yy = c[i] << 8 | c[i + 1]; i += 2;
                         } else {
-                            var snake = os["s" + snakeId]; // snake
                             var head = snake.pts[snake.pts.length - 1];
 
                             xx = head.xx + c[i] - 128; i++;
@@ -312,7 +342,8 @@ if (!String.prototype.format) {
                     }
 
                     if (log && (!filter || window.snake.id)) {
-                        console.info("{0} ({1}ms): packet {2}, snake s{3} [{4}]".format(cptm, dtm, packetType + "/move", snakeId, [xx, yy]));
+                        console.info("{0} ({1}ms): packet {2}, snake s{3} [{4}]"
+                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId, [xx, yy]));
                     }
 
                     if (snake == window.snake) {
@@ -334,12 +365,15 @@ if (!String.prototype.format) {
                             snakePos.shift();
                         }
                     }
-                } if ("e" == packetType || "E" == packetType || "3" == packetType || "4" == packetType || "5" == packetType) {
+                } else if ("e" == packetType || "E" == packetType || "3" == packetType || "4" == packetType || "5" == packetType) {
                     const left = 1;
                     const right = 2;
 
                     var dir = -1, ang = -1, wang = -1, sp = -1;
                     var packetLen2 = c.length - 2;
+
+                    var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
+
                     if (6 <= protocol_version) {
                         if (6 == packetLen2) {
                             // "e" - left, "4" - right
@@ -452,15 +486,41 @@ if (!String.prototype.format) {
                     }
 
                     if (log && (!filter || window.snake.id)) {
-                        console.info("{0} ({1}ms): packet {2}, snake s{3} [dir = {4}, ang = {5}, wang = {6}, sp = {7}, dAng = {8}, spang = {9}]".format(cptm, dtm, packetType + "/rotate", snakeId, dir, ang, wang, sp, dAng, spang));
+                        console.info("{0} ({1}ms): packet {2}, snake s{3} [dir = {4}, ang = {5}, wang = {6}, sp = {7}, dAng = {8}, spang = {9}]"
+                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId, dir, ang, wang, sp, dAng, spang));
                     }
 
                     if (snake == window.snake) {
                         snakeRot = [dir, ang, wang, sp];
                     }
+                } else if ("W" == packetType) {
+                    xx = c[i]; i ++;
+                    yy = c[i]; i ++;
+
+                    if (log && (!filter || window.snake.id)) {
+                        console.info("{0} ({1}ms): packet {2}, [{3}]"
+                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], [xx, yy]));
+                    }
+                } else if ("w" == packetType) {
+                    if (8 <= protocol_version) {
+                        xx = c[i] << 8 | c[i + 1]; i += 2;
+                        yy = c[i] << 8 | c[i + 1]; i += 2;
+                    } else {
+                        // f = c[i] ?? add if == 1
+                        i ++;
+                        xx = c[i] << 8 | c[i + 1]; i += 2;
+                        yy = c[i] << 8 | c[i + 1]; i += 2;
+                    }
+
+                    if (log && (!filter || window.snake.id)) {
+                        console.info("{0} ({1}ms): packet {2}, [{3}]"
+                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], [xx, yy]));
+                    }
                 } else {
-                    if (log) {
-                        console.info("{0} ({1}ms): packet {2}, snake s{3}".format(cptm, dtm, packetType, snakeId));
+                    if (log && (!filter || window.snake.id)) {
+                        var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
+                        if (!os[snakeId]) { snakeId = 0; }
+                        console.info("{0} ({1}ms): packet {2}, snake s{3}".format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId));
                     }
                 }
             }
