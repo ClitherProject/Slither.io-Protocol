@@ -38,11 +38,11 @@ Most packets start like this:
 |Type Identifier|Meaning|
 |---------------|-------|
 |a              |<a href="#type_a_detail">Initial setup</a>|
-|e              |<a href="#type_e_detail">Snake rotation counterclockwise</a>|
-|E              |Snake rotation|
-|3              |Snake rotation|
-|4              |Snake rotation|
-|5              |Snake rotation|
+|e              |<a href="#type_e_detail">Snake rotation (?dir ang ?wang ?sp)</a>|
+|E              |<a href="#type_E_detail">Snake rotation counterclockwise (dir wang ?sp)</a>|
+|3              |<a href="#type_3_detail">Snake rotation counterclockwise (dir ang wang | sp)</a>|
+|4              |<a href="#type_4_detail">Snake rotation clockwise (dir wang ?sp)</a>|
+|5              |<a href="#type_5_detail">Snake rotation clockwise (dir ang wang)</a>|
 |h              |<a href="#type_h_detail">Update snake fam</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
 |g              |<a href="#type_g_detail">Update snake body</a>|
@@ -87,16 +87,115 @@ Tells the Client some basic information. After the message arrives, the game cal
 |25|int8|protocol_version|Unknown|
 
 
-<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation counterclockwise)</h4></a>
+<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation (?dir ang ?wang ?sp))</h4></a>
 
-Update snake rotation direction is counterclockwise. 
+Update snake rotation direction. If packet length is 6 + 2, then rotation direction is counterclockwise:
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5|int8|ang (current snake angle in radians, clockwise from (1, 0)) if packet.len >= 6|
-|6|int8|wang (target rotation angle snake is heading to) if packet.len >= 8|
-|7|int8|sp (snake speed?) if packet.len >= 7|
+|5|int8|ang * pi2 / 256 (current snake angle in radians, clockwise from (1, 0))|
+|6|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+|7|int8|sp / 18 (snake speed?)|
+
+If packet length is 5 + 2, then rotation defined by the angle:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|ang * pi2 / 256 (current snake angle in radians, clockwise from (1, 0))|
+|6|int8|sp / 18 (snake speed?)|
+
+If packet length is 4 + 2, then rotation defined by the angle:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|ang * pi2 / 256 (current snake angle in radians, clockwise from (1, 0))|
+
+Most used packets are "e" and "4", then "5" and "3".
+
+
+<a name="type_E_detail" href="#type_E_detail"><h4>Packet "E" (Snake rotation counterclockwise (dir wang ?sp))</h4></a>
+
+Update snake rotation direction is counterclockwise. If packet length is 5 + 2, then rotation is counterclockwise:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+|6|int8|sp / 18 (snake speed?)|
+
+If packet length is 4 + 2, then rotation is counterclockwise:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+
+
+<a name="type_3_detail" href="#type_3_detail"><h4>Packet "3" (Snake rotation counterclockwise (dir ang wang | sp))</h4></a>
+
+Update snake rotation direction. If packet length is 5 + 2, then rotation direction is counterclockwise:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|ang * pi2 / 256 (current snake angle in radians, clockwise from (1, 0))|
+|6|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+
+If packet length is 4 + 2, then packet contains speed only:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|sp / 18 (snake speed?)|
+
+Most used packets are "e" and "4", then "5" and "3".
+
+
+<a name="type_4_detail" href="#type_4_detail"><h4>Packet "4" (Snake rotation clockwise (dir wang ?sp))</h4></a>
+
+Update snake rotation direction is clockwise.
+
+If packet length is 5 + 2, then rotation direction is clockwise:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+|6|int8|sp / 18 (snake speed?)|
+
+If packet length is 4 + 2, then packet contains speed only:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+
+Most used packets are "e" and "4", then "5" and "3".
+
+
+<a name="type_5_detail" href="#type_5_detail"><h4>Packet "5" (Snake rotation clockwise (dir ang wang))</h4></a>
+
+Update snake rotation direction is clockwise.
+
+If packet length is 5 + 2, then rotation direction is clockwise:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|ang * pi2 / 256 (current snake angle in radians, clockwise from (1, 0))|
+|6|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+
+If packet length is 4 + 2, then packet contains speed only:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+
+Most used packets are "e" and "4", then "5" and "3".
 
 
 <a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Update fam)</h4></a>
