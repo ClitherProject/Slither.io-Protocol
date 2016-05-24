@@ -45,10 +45,10 @@ Most packets start like this:
 |5              |body parts movement|
 |h              |<a href="#type_h_detail">Update snake fam</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
-|g              |<a href="#type_g_detail">Update snake body</a>|
-|G              |<a href="#type_G_detail">Update snake body</a>|
-|n              |<a href="#type_n_detail">Update snake body</a>|
-|N              |<a href="#type_N_detail">Update snake body</a>|
+|g              |<a href="#type_g_detail">Move snake</a>|
+|G              |<a href="#type_G_detail">Move snake</a>|
+|n              |<a href="#type_n_detail">Move snake</a>|
+|N              |<a href="#type_N_detail">Move snake</a>|
 |l              |<a href="#type_l_detail">Leaderboard</a>|
 |v              |<a href="#type_v_detail">dead/disconnect packet</a>|
 |W              |<a href="#type_W_detail">Add Sector</a>|
@@ -128,7 +128,7 @@ Removes the last part from this snake.
 
 <a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Update snake body)</h4></a>
 
-One body-part is being added at the front, one is being removed at the back.
+Move snake into new position.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -139,7 +139,7 @@ One body-part is being added at the front, one is being removed at the back.
 
 <a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Update snake body)</h4></a>
 
-One body-part is being added at the front, one is being removed at the back.
+Move snake into new position.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -150,7 +150,7 @@ One body-part is being added at the front, one is being removed at the back.
 
 <a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Update snake body)</h4></a>
 
-One body-part is being added at the front, none is being removed. The fam-value is updated.
+Move snake into new position and shorten by 1 body-part node. The fam-value is updated.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -162,7 +162,7 @@ One body-part is being added at the front, none is being removed. The fam-value 
 
 <a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Update snake body)</h4></a>
 
-One body-part is being added at the front, none is being removed. The fam-value is updated.
+Move snake into new position and shorten by 1 body-part node. The fam-value is updated.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
