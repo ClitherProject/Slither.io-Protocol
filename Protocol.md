@@ -150,7 +150,8 @@ Move snake into new position.
 
 <a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Update snake body)</h4></a>
 
-Move snake into new position and shorten by 1 body-part node. The fam-value is updated.
+Move a snake into new position and increase snake body
+length by 1 body-part. The fam-value is updated.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -162,7 +163,8 @@ Move snake into new position and shorten by 1 body-part node. The fam-value is u
 
 <a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Update snake body)</h4></a>
 
-Move snake into new position and shorten by 1 body-part node. The fam-value is updated.
+Move a snake into new position and increase snake body
+length by 1 body-part. The fam-value is updated.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
