@@ -38,11 +38,11 @@ Most packets start like this:
 |Type Identifier|Meaning|
 |---------------|-------|
 |a              |<a href="#type_a_detail">Initial setup</a>|
-|e              |<a href="#type_e_detail">body parts movement</a>|
-|E              |body parts movement|
-|3              |body parts movement|
-|4              |body parts movement|
-|5              |body parts movement|
+|e              |<a href="#type_e_detail">Snake rotation counterclockwise</a>|
+|E              |Snake rotation|
+|3              |Snake rotation|
+|4              |Snake rotation|
+|5              |Snake rotation|
 |h              |<a href="#type_h_detail">Update snake fam</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
 |g              |<a href="#type_g_detail">Update snake body</a>|
@@ -87,16 +87,16 @@ Tells the Client some basic information. After the message arrives, the game cal
 |25|int8|protocol_version|Unknown|
 
 
-<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Update snake direction)</h4></a>
+<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation counterclockwise)</h4></a>
 
-Update local and remote snake direction.
+Update snake rotation direction is counterclockwise. 
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5|int8|D (angle)|
-|6|int8|x (unknown value)|
-|7|int8|A (unknown value)|
+|5|int8|ang (current snake angle in radians, clockwise from (1, 0)) if packet.len >= 6|
+|6|int8|wang (target rotation angle snake is heading to) if packet.len >= 8|
+|7|int8|sp (snake speed?) if packet.len >= 7|
 
 
 <a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Update fam)</h4></a>
