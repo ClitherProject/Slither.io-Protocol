@@ -77,13 +77,13 @@ Tells the Client some basic information. After the message arrives, the game cal
 |6-7|int16|mscps (maximum snake length in body parts units)|411|
 |8-9|int16|sector_size|480|
 |10-11|int16|sector_count_along_edge (unused in the game-code)|130|
-|12|int8|spangdv (value / 10)|4.8|
+|12|int8|spangdv (value / 10) (coef. to calculate angular speed change depending snake speed)|4.8|
 |13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|
 |15-16|int16|nsp2 (value / 100)|0.5|
 |17-18|int16|nsp3 (value / 100)|12|
-|19-20|int16|mamu (value / 1E3)|0.033|
+|19-20|int16|mamu (value / 1E3) (basic snake angular speed)|0.033|
 |21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|
-|23-24|int16|cst (value / 1E3) (snake tail speed ratio to the head)|0.43|
+|23-24|int16|cst (value / 1E3) (snake tail speed ratio )|0.43|
 |25|int8|protocol_version|Unknown|
 
 `sct` is a snake body parts count (length) taking values between [2 .. mscps].
@@ -93,6 +93,29 @@ Tells the Client some basic information. After the message arrives, the game cal
 Total snake score equals:
 
         Math.floor(15 * (fpsls[snake.sct] + snake.fam / fmlts[snake.sct] - 1) - 5) / 1
+
+`sct` - snake length in body parts units. `sc` - snake body part size? dep. on snake length.
+`scang` - change ratio of snake angular speed by snake thickness.
+
+        f.sc = Math.min(6, 1 + (f.sct - 2) / 106);
+        f.scang = .13 + .87 * Math.pow((7 - f.sc) / 6, 2);
+
+Relation between `nsp1`, `nsp2` and `sc` of unknown meaning.
+
+        f.ssp = nsp1 + nsp2 * f.sc;
+        f.fsp = f.ssp + .1;
+        f.wsep = 6 * f.sc;
+
+`sp` - snake speed. `spangdv` - coef. to calculate angular speed change depending snake speed.
+`spang` - change ratio of snake angular speed by movement speed.
+
+        f.spang = f.sp / spangdv;
+        1 < f.spang && (f.spang = 1);
+
+`mamu` - basic snake angular speed. `vfr` - frames count spent. `spang` - influence
+of snake speed. `scang` - influence of snake length.
+
+        eang = mamu * vfr * e.scang * e.spang;
 
 <a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation (?dir ang ?wang ?sp))</h4></a>
 
