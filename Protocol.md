@@ -83,7 +83,7 @@ Tells the Client some basic information. After the message arrives, the game cal
 |17-18|int16|nsp3 (value / 100)|12|
 |19-20|int16|mamu (value / 1E3)|0.033|
 |21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|
-|23-24|int16|cst (value / 1E3)|0.43|
+|23-24|int16|cst (value / 1E3) (snake tail speed ratio to the head)|0.43|
 |25|int8|protocol_version|Unknown|
 
 `sct` is a snake body parts count (length) taking values between [2 .. mscps].
