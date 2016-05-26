@@ -40,10 +40,10 @@ Most packets start like this:
 |a              |<a href="#type_a_detail">Initial setup</a>|
 |e              |<a href="#type_e_detail">Snake rotation (?dir ang ?wang ?sp)</a>|
 |E              |<a href="#type_E_detail">Snake rotation counterclockwise (dir wang ?sp)</a>|
-|3              |<a href="#type_3_detail">Snake rotation counterclockwise (dir ang wang | sp)</a>|
+|3              |<a href="#type_3_detail">Snake rotation counterclockwise (dir ang wang &#124; sp)</a>|
 |4              |<a href="#type_4_detail">Snake rotation clockwise (dir wang ?sp)</a>|
 |5              |<a href="#type_5_detail">Snake rotation clockwise (dir ang wang)</a>|
-|h              |<a href="#type_h_detail">Update snake fam</a>|
+|h              |<a href="#type_h_detail">Update snake last body part fullness (fam)</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
 |g              |<a href="#type_g_detail">Move snake</a>|
 |G              |<a href="#type_G_detail">Move snake</a>|
@@ -74,7 +74,7 @@ Tells the Client some basic information. After the message arrives, the game cal
 |Bytes|Data Type|Description|Default|
 |-----|---------|-----------|-------|
 |3-5|int24|Game Radius|21600|
-|6-7|int16|setMscps(value)? setMscps is used to fill the arrays fmlts and fpsls. But IDK for what they are.|411|
+|6-7|int16|mscps (maximum snake length in body parts units)|411|
 |8-9|int16|sector_size|480|
 |10-11|int16|sector_count_along_edge (unused in the game-code)|130|
 |12|int8|spangdv (value / 10)|4.8|
@@ -86,6 +86,13 @@ Tells the Client some basic information. After the message arrives, the game cal
 |23-24|int16|cst (value / 1E3)|0.43|
 |25|int8|protocol_version|Unknown|
 
+`sct` is a snake body parts count (length) taking values between [2 .. mscps].
+`fpsls[mscps]` contains snake volume (score) to snake length in body parts units.
+`1/fmlts[mscps]` contains body part volume (score) to certain snake length.
+
+Total snake score equals:
+
+        Math.floor(15 * (fpsls[snake.sct] + snake.fam / fmlts[snake.sct] - 1) - 5) / 1
 
 <a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation (?dir ang ?wang ?sp))</h4></a>
 
@@ -198,9 +205,13 @@ If packet length is 4 + 2, then packet contains speed only:
 Most used packets are "e" and "4", then "5" and "3".
 
 
-<a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Update fam)</h4></a>
+<a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Update snake last body part fullness (fam))</h4></a>
 
 Update the fam-value (used for length-calculation) of a snake.
+`fam` is a float value (usually in [0 .. 1.0]) representing
+a body part ratio before changing snake length `sct` in body
+parts. Snake gets new body part when `fam` reaches 1, and looses
+1, when `fam` reaches 0.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
