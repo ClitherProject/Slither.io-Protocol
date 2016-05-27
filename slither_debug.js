@@ -2,7 +2,7 @@
 // @name         slither debug
 // @version      0.1
 // @description  install with Tampermonkey (https://tampermonkey.net/)
-// @author       STACS, john.koepi / sitano
+// @author       john.koepi / sitano, stacs
 // @match        http://slither.io
 // @grant        none
 // ==/UserScript==
@@ -65,15 +65,30 @@ if (!String.prototype.format) {
   };
 }
 
+function appendDiv(id, className, style) {
+    var div = document.createElement("div");
+    if (id) {
+        div.id = id;
+    }
+    if (className) {
+        div.className = className;
+    }
+    if (style) {
+        div.style = style;
+    }
+    return document.body.appendChild(div);
+}
+
 (function() {
     'use strict';
 
     // CONSTANTS
-    var fov = 124; // Food gathering field of view (0-250)
+    const fov = 124; // Food gathering field of view (0-250)
 
     // STATE
     var snakeDirV = new Vector2(0,0);
     var snakePosV = new Vector2(0,0);
+
     var enabled = true;
     var draw = true;
     var log = false;
@@ -84,11 +99,30 @@ if (!String.prototype.format) {
     var snakePos = [];
     var snakeRot = [ /* dir = -1, ang = -1, wang = -1, sp = -1 */];
 
-    // The direction to point the player when we're next allowed to send a packet.
-    var targetDirection = 0;
+    var gameFPS = null;
+    var positionHUD = null;
+    var ipHUD = null;
+    var fpsHUD = null;
+    var debugHUD = null;
+    var styleHUD = "color: #FFF; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; position: fixed; opacity: 0.35; z-index: 7;";
 
     // UI STUFF
     var status = "STARTING...";
+
+    var zoom = function(e) {
+        if (!window.gsc) {
+            return;
+        }
+        window.gsc *= Math.pow(0.9, e.wheelDelta / -120 || e.detail / 2 || 0);
+    };
+
+    var initMouseWheel = function() {
+        if (/firefox/i.test(navigator.userAgent)) {
+            document.addEventListener("DOMMouseScroll", zoom, false);
+        } else {
+            document.body.onmousewheel = zoom;
+        }
+    };
 
     document.addEventListener('keydown', function(e) {
         if (e.keyCode == 65 /* a */) {
@@ -104,29 +138,84 @@ if (!String.prototype.format) {
         }
 
         if (e.keyCode == 84 /* t */) {
+            if (!window.pfd) {
+                window.pfd = document.createElement("div");
+                pfd.style.position = "fixed";
+                pfd.style.left = "4px";
+                pfd.style.bottom = "69px";
+                pfd.style.width = "400px";
+                pfd.style.height = "100px";
+                pfd.style.background = "rgba(0, 0, 0, .8)";
+                pfd.style.color = "#80FF80";
+                pfd.style.fontFamily = "Verdana";
+                pfd.style.zIndex = 999999;
+                pfd.style.fontSize = "11px";
+                pfd.style.padding = "10px";
+                pfd.style.borderRadius = "30px";
+                pfd.textContent = "Testing HUD";
+                document.body.appendChild(window.pfd);
+            }
+
             testing = !testing;
+
+            if (testing) {
+                pfd.style.display = "block";
+            } else {
+                pfd.style.display = "none";
+            }
         }
     }, false);
 
-    var repaintHeader = function() {
-        var div = document.getElementById("debug-hud");
-        if (!div) {
-            div = document.createElement("div");
-            div.id = "debug-hud";
-            div.class = "nsi";
-            div.style = "color: rgb(255, 255, 255); font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; position: fixed; opacity: 0.35; z-index: 7; left: 30px; top: 150px;";
-            document.body.appendChild(div);
+    var repaintInfoHud = function() {
+        if (!ipHUD) {
+            ipHUD = appendDiv("ip-hud", "nsi", styleHUD + "right: 30; bottom: 150px;");
+        }
+        if (!positionHUD) {
+            positionHUD = appendDiv("position-hud", "nsi", styleHUD + "right: 30; bottom: 120px;");
+        }
+        if (!fpsHUD) {
+            fpsHUD = appendDiv("fps-hud", "nsi", styleHUD + "right: 30; bottom: 170px;");
         }
 
-        var html = "Debug by STACS, john.koepi / sitano";
+        if (positionHUD) {
+            positionHUD.textContent = "X: " + (~~window.view_xx || 0) + " Y: " + (~~window.view_yy || 0);
+        }
+
+        if (fpsHUD && window.fps && window.lrd_mtm) {
+            if (Date.now() - window.lrd_mtm > 970) {
+                fpsHUD.textContent = "FPS: " + window.fps;
+            }
+        }
+
+        if (ipHUD && window.bso) {
+            var currentIP = window.bso.ip + ":" + window.bso.po;
+            ipHUD.textContent = "IP: " + currentIP;
+        }
+    };
+
+    var repaintDebugHud = function() {
+        if (!debugHUD) {
+            debugHUD = appendDiv("debug-hud", "nsi", styleHUD + "left: 30px; top: 150px;");
+        }
+
+        var html = "Debug by john.koepi / sitano, stacs";
         html += "<br/>-----------------------------------";
         html += "<br/>" + "Auto " + (enabled?"on":"off") + " - press 'a' to toggle (" + "status: " + status + ")";
         html += "<br/>" + "Log " + (log?"on":"off") + " - press 'l' to toggle, press 'f' to filter " + (filter?"on":"off");
         html += "<br/>" + "Testing " + (testing?"on":"off") + " - press 't' to toggle<br />";
-        html += "<br/>" + "packet timing: " + packetTime;
-        html += "<br/>" + "move timing: " + moveTime;
-        html += "<br/>" + "rotation: " + snakeRot;
-        div.innerHTML = html;
+        if (playing) {
+            html += "<br/>" + "packet timing = " + packetTime;
+            html += "<br/>" + "move timing = " + moveTime;
+            html += "<br/>" + "rotation = " + snakeRot;
+            // fam - 0..1 ratio to the next body increment
+            // sct - live body parts count
+            html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam, snake.sct);
+            html += "<br/>" + "sp = {0}, tsp = {1}, fsp = {2}, sfr = {3}, msl = {4}".format(snake.sp, snake.tsp, snake.fsp, snake.sfr, snake.msl);
+            html += "<br/>" + "fltg = {0}".format(snake.fltg);
+            html += "<br/>" + "spang = {0}, sc = {1}, scang = {2}".format(snake.spang, snake.sc, snake.scang);
+            html += "<br/>" + "chl = {0}".format(snake.chl);
+        }
+        debugHUD.innerHTML = html;
     };
 
     var distToPlayer = function(food) {
@@ -186,10 +275,17 @@ if (!String.prototype.format) {
 
     // ----- INTERFACE -----
     var setDirection = function(direction) {
+        if (!enabled) {
+            return;
+        }
+
         if (direction >= 0 && direction <= 250) {
-            targetDirection = direction;
+            var ang = 2 * direction * Math.PI / 256;
+            var angV = new Vector2(Math.cos(ang), Math.sin(ang));
+            window.xm = 100 * angV.x;
+            window.ym = 100 * angV.y;
         } else {
-            console.err("INVALID TURNING VALUE: " + direction);
+            console.err("Invalid turn angle: " + direction);
         }
     };
 
@@ -529,15 +625,10 @@ if (!String.prototype.format) {
         };
     };
 
-    // Send packet to set player's direction on a delay, to avoid running in to rate-limit.
-    setInterval(function() {
-        if(!enabled) return;
-        sendPacket(targetDirection);
-    }, 55);
-
     // ----- /INTERFACE -----
     var render = function() {
-        repaintHeader();
+        repaintInfoHud();
+        repaintDebugHud();
 
         try {
             var sumVec = new Vector2(0,0);
@@ -623,4 +714,6 @@ if (!String.prototype.format) {
     };
 
     raf(render);
+
+    initMouseWheel();
 })();
