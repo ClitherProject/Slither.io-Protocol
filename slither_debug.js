@@ -370,9 +370,9 @@ function appendDiv(id, className, style) {
 
     var packetTypes = {
         a: "Initial setup",
-        e: "Snake rotation (?dir ang ?wang ?sp)",
-        E: "Snake rotation counterclockwise (dir wang ?sp)",
-        3: "Snake rotation counterclockwise (dir ang wang",
+        e: "Snake rotation ccw (?dir ang ?wang ?sp)",
+        E: "Snake rotation ccw (dir wang ?sp)",
+        3: "Snake rotation ccw (dir ang wang | sp)",
         4: "Snake rotation clockwise (dir wang ?sp)",
         5: "Snake rotation clockwise (dir ang wang)",
         h: "Update snake fam",
@@ -416,7 +416,10 @@ function appendDiv(id, className, style) {
                 packetTime = [dtm, cltm, Math.max(-180, Math.min(180, dtm - cltm))];
 
                 var packetType = String.fromCharCode(c[2]); // packet type
-                i = 3; // next byte
+                var i = 3; // next byte
+               
+                var playerSnakeId = window.snake ? window.snake.id : 0;
+                var xx = 0, yy = 0;
 
                 if ("g" == packetType || "n" == packetType || "G" == packetType || "N" == packetType) {
                     var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
@@ -437,7 +440,7 @@ function appendDiv(id, className, style) {
                         yy = (c[i] << 16 | c[i + 1] << 8 | c[i + 2]) / 5; i += 3;
                     }
 
-                    if (log && (!filter || window.snake.id)) {
+                    if (log && (!filter || playerSnakeId)) {
                         console.info("{0} ({1}ms): packet {2}, snake s{3} [{4}]"
                                      .format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId, [xx, yy]));
                     }
@@ -581,7 +584,7 @@ function appendDiv(id, className, style) {
                         }
                     }
 
-                    if (log && (!filter || window.snake.id)) {
+                    if (log && (!filter || playerSnakeId)) {
                         console.info("{0} ({1}ms): packet {2}, snake s{3} [dir = {4}, ang = {5}, wang = {6}, sp = {7}, dAng = {8}, spang = {9}]"
                                      .format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId, dir, ang, wang, sp, dAng, spang));
                     }
@@ -593,7 +596,7 @@ function appendDiv(id, className, style) {
                     xx = c[i]; i ++;
                     yy = c[i]; i ++;
 
-                    if (log && (!filter || window.snake.id)) {
+                    if (log && (!filter || playerSnakeId)) {
                         console.info("{0} ({1}ms): packet {2}, [{3}]"
                                      .format(cptm, dtm, packetType + "/" + packetTypes[packetType], [xx, yy]));
                     }
@@ -608,12 +611,12 @@ function appendDiv(id, className, style) {
                         yy = c[i] << 8 | c[i + 1]; i += 2;
                     }
 
-                    if (log && (!filter || window.snake.id)) {
+                    if (log && (!filter || playerSnakeId)) {
                         console.info("{0} ({1}ms): packet {2}, [{3}]"
                                      .format(cptm, dtm, packetType + "/" + packetTypes[packetType], [xx, yy]));
                     }
                 } else {
-                    if (log && (!filter || window.snake.id)) {
+                    if (log && (!filter || playerSnakeId)) {
                         var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
                         if (!os[snakeId]) { snakeId = 0; }
                         console.info("{0} ({1}ms): packet {2}, snake s{3}".format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId));
@@ -632,10 +635,11 @@ function appendDiv(id, className, style) {
 
         try {
             var sumVec = new Vector2(0,0);
+            var playerSnakeId = window.snake ? window.snake.id : 0;
 
             for (var snakeId in os) {
                 if (os.hasOwnProperty(snakeId)) {
-                    if (snakeId != "s" + snake.id) {
+                    if (snakeId != "s" + playerSnakeId) {
                         // Opponent Snake
                         var currentSnake = os[snakeId];
 
