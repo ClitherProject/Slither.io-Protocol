@@ -164,6 +164,15 @@ function appendDiv(id, className, style) {
                 pfd.style.display = "none";
             }
         }
+
+        if (e.keyCode == 67 /* c */) {
+            window.bso = {
+                ip: "127.0.0.1",
+                po: 8080
+            };
+            window.forcing = true;
+            window.want_play = true;
+        }
     }, false);
 
     var repaintInfoHud = function() {
@@ -202,7 +211,8 @@ function appendDiv(id, className, style) {
         html += "<br/>-----------------------------------";
         html += "<br/>" + "Auto " + (enabled?"on":"off") + " - press 'a' to toggle (" + "status: " + status + ")";
         html += "<br/>" + "Log " + (log?"on":"off") + " - press 'l' to toggle, press 'f' to filter " + (filter?"on":"off");
-        html += "<br/>" + "Testing " + (testing?"on":"off") + " - press 't' to toggle<br />";
+        html += "<br/>" + "Testing " + (testing?"on":"off") + " - press 't' to toggle";
+        html += "<br/>" + "Connect to 127.0.0.1:8080 - press 'c'<br />";
         if (playing) {
             html += "<br/>" + "packet timing = " + packetTime;
             html += "<br/>" + "move timing = " + moveTime;
@@ -417,7 +427,7 @@ function appendDiv(id, className, style) {
 
                 var packetType = String.fromCharCode(c[2]); // packet type
                 var i = 3; // next byte
-               
+
                 var playerSnakeId = window.snake ? window.snake.id : 0;
                 var xx = 0, yy = 0;
 
