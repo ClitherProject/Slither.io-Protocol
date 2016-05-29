@@ -363,14 +363,15 @@ Starting at byte 6 are the top ten players.
 |3|int8|local players rank in leaderboard (0 means not in leaderboard, otherwise this is equal to the "local players rank". Actually always redundant information)|
 |4-5|int16|local players rank|
 |6-7|int16|players on server count|
-|?-?|int16|J (for snake length calculation)|
-|?-?|int24|I (for snake length calculation; value / 16777215)|
+|?-?|int16|snake body parts count|
+|?-?|int24|snake last body part fullness (fam / 16777215)|
 |?-?|int8|font color (between 0 and 8)|
 |?-?|int8|username length|
 |?-?|string|username|
 
-snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
+Snake score / length:
 
+        Math.floor(15 * (fpsls[snake.sct] + snake.fam / fmlts[snake.sct] - 1) - 5) / 1
 
 <a name="type_v_detail" href="#type_v_detail"><h4>Packet "v" (dead/disconnect packet)</h4></a>
 
