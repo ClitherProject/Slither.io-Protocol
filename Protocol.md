@@ -38,10 +38,10 @@ Most packets start like this:
 |Type Identifier|Meaning|
 |---------------|-------|
 |a              |<a href="#type_a_detail">Initial setup</a>|
-|e              |<a href="#type_e_detail">Snake rotation (?dir ang ?wang ?sp)</a>|
+|e              |<a href="#type_e_detail">Snake rotation counterclockwise (?dir ang ?wang ?sp)</a>|
 |E              |<a href="#type_E_detail">Snake rotation counterclockwise (dir wang ?sp)</a>|
 |3              |<a href="#type_3_detail">Snake rotation counterclockwise (dir ang wang &#124; sp)</a>|
-|4              |<a href="#type_4_detail">Snake rotation clockwise (dir wang ?sp)</a>|
+|4              |<a href="#type_4_detail">Snake rotation clockwise (dir ang? wang ?sp)</a>|
 |5              |<a href="#type_5_detail">Snake rotation clockwise (dir ang wang)</a>|
 |h              |<a href="#type_h_detail">Update snake last body part fullness (fam)</a>|
 |r              |<a href="#type_r_detail">Remove snake part</a>|
@@ -117,9 +117,17 @@ of snake speed. `scang` - influence of snake length.
 
         eang = mamu * vfr * e.scang * e.spang;
 
-<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation (?dir ang ?wang ?sp))</h4></a>
+<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation counterclockwise (?dir ang ?wang ?sp))</h4></a>
 
-Update snake rotation direction. If packet length is 6 + 2, then rotation direction is counterclockwise:
+Update snake rotation direction. There are 4 parameters 
+(direction, angle, wanted angle, speed) which combination determines 
+rotation packet type "e", "E", "3", "4", "5" and set of serialized fields.
+Exact set of fields evaluation based on packet type and packet length.
+Fields always follow same ordering (snakeId < ang? < wang? < sp?).
+Thus, having 5 packet types, and up to 3 possible length reduce, we've
+got up to 12 useful cases.
+
+If packet length is 6 + 2, then rotation direction is counterclockwise:
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -148,7 +156,15 @@ Most used packets are "e" and "4", then "5" and "3".
 
 <a name="type_E_detail" href="#type_E_detail"><h4>Packet "E" (Snake rotation counterclockwise (dir wang ?sp))</h4></a>
 
-Update snake rotation direction is counterclockwise. If packet length is 5 + 2, then rotation is counterclockwise:
+Update snake rotation direction. There are 4 parameters 
+(direction, angle, wanted angle, speed) which combination determines 
+rotation packet type "e", "E", "3", "4", "5" and set of serialized fields.
+Exact set of fields evaluation based on packet type and packet length.
+Fields always follow same ordering (snakeId < ang? < wang? < sp?).
+Thus, having 5 packet types, and up to 3 possible length reduce, we've
+got up to 12 useful cases.
+
+If packet length is 5 + 2, then rotation is counterclockwise:
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -166,7 +182,15 @@ If packet length is 4 + 2, then rotation is counterclockwise:
 
 <a name="type_3_detail" href="#type_3_detail"><h4>Packet "3" (Snake rotation counterclockwise (dir ang wang | sp))</h4></a>
 
-Update snake rotation direction. If packet length is 5 + 2, then rotation direction is counterclockwise:
+Update snake rotation direction. There are 4 parameters 
+(direction, angle, wanted angle, speed) which combination determines 
+rotation packet type "e", "E", "3", "4", "5" and set of serialized fields.
+Exact set of fields evaluation based on packet type and packet length.
+Fields always follow same ordering (snakeId < ang? < wang? < sp?).
+Thus, having 5 packet types, and up to 3 possible length reduce, we've
+got up to 12 useful cases.
+
+If packet length is 5 + 2, then rotation direction is counterclockwise:
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
@@ -184,9 +208,24 @@ If packet length is 4 + 2, then packet contains speed only:
 Most used packets are "e" and "4", then "5" and "3".
 
 
-<a name="type_4_detail" href="#type_4_detail"><h4>Packet "4" (Snake rotation clockwise (dir wang ?sp))</h4></a>
+<a name="type_4_detail" href="#type_4_detail"><h4>Packet "4" (Snake rotation clockwise (dir ang? wang ?sp))</h4></a>
 
-Update snake rotation direction is clockwise.
+Update snake rotation direction. There are 4 parameters 
+(direction, angle, wanted angle, speed) which combination determines 
+rotation packet type "e", "E", "3", "4", "5" and set of serialized fields.
+Exact set of fields evaluation based on packet type and packet length.
+Fields always follow same ordering (snakeId < ang? < wang? < sp?).
+Thus, having 5 packet types, and up to 3 possible length reduce, we've
+got up to 12 useful cases.
+
+If packet length is 6 + 2, then rotation direction is clockwise:
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|3-4|int16|Snake id|
+|5|int8|ang * pi2 / 256 (current snake angle in radians, clockwise from (1, 0))|
+|6|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
+|7|int8|sp / 18 (snake speed?)|
 
 If packet length is 5 + 2, then rotation direction is clockwise:
 
@@ -208,7 +247,13 @@ Most used packets are "e" and "4", then "5" and "3".
 
 <a name="type_5_detail" href="#type_5_detail"><h4>Packet "5" (Snake rotation clockwise (dir ang wang))</h4></a>
 
-Update snake rotation direction is clockwise.
+Update snake rotation direction. There are 4 parameters 
+(direction, angle, wanted angle, speed) which combination determines 
+rotation packet type "e", "E", "3", "4", "5" and set of serialized fields.
+Exact set of fields evaluation based on packet type and packet length.
+Fields always follow same ordering (snakeId < ang? < wang? < sp?).
+Thus, having 5 packet types, and up to 3 possible length reduce, we've
+got up to 12 useful cases.
 
 If packet length is 5 + 2, then rotation direction is clockwise:
 
