@@ -65,6 +65,32 @@ if (!String.prototype.format) {
   };
 }
 
+if (!String.prototype.padStart) {
+  String.prototype.padStart = function(targetLength) {
+    return " ".repeat(Math.max(0, targetLength - this.length)) + this;
+  };
+}
+
+if (!String.prototype.padStartHTML) {
+  String.prototype.padStartHTML = function(targetLength) {
+    return "&nbsp;".repeat(Math.max(0, targetLength - this.length)) + this;
+  };
+}
+
+if (!Number.prototype.padStart) {
+  Number.prototype.padStart = function(targetLength) {
+    var s = this.toString();
+    return " ".repeat(Math.max(0, targetLength - s.length)) + s;
+  };
+}
+
+if (!Number.prototype.padStartHTML) {
+  Number.prototype.padStartHTML = function(targetLength) {
+    var s = this.toString();
+    return "&nbsp;".repeat(Math.max(0, targetLength - s.length)) + s;
+  };
+}
+
 function appendDiv(id, className, style) {
     var div = document.createElement("div");
     if (id) {
@@ -137,6 +163,10 @@ function appendDiv(id, className, style) {
             filter = !filter;
         }
 
+        if (e.keyCode == 71 /* g */) {
+            draw = !draw;
+        }
+
         if (e.keyCode == 84 /* t */) {
             if (!window.pfd) {
                 window.pfd = document.createElement("div");
@@ -163,6 +193,15 @@ function appendDiv(id, className, style) {
             } else {
                 pfd.style.display = "none";
             }
+        }
+
+        if (e.keyCode == 67 /* c */) {
+            window.bso = {
+                ip: "127.0.0.1",
+                po: 8080
+            };
+            window.forcing = true;
+            window.want_play = true;
         }
     }, false);
 
@@ -202,18 +241,46 @@ function appendDiv(id, className, style) {
         html += "<br/>-----------------------------------";
         html += "<br/>" + "Auto " + (enabled?"on":"off") + " - press 'a' to toggle (" + "status: " + status + ")";
         html += "<br/>" + "Log " + (log?"on":"off") + " - press 'l' to toggle, press 'f' to filter " + (filter?"on":"off");
-        html += "<br/>" + "Testing " + (testing?"on":"off") + " - press 't' to toggle<br />";
+        html += "<br/>" + "Testing " + (testing?"on":"off") + " - press 't' to toggle";
+        html += "<br/>" + "Draw debug " + (draw?"on":"off") + " - press 'g' to toggle";
+        html += "<br/>" + "Connect to 127.0.0.1:8080 - press 'c'<br />";
         if (playing) {
-            html += "<br/>" + "packet timing = " + packetTime;
-            html += "<br/>" + "move timing = " + moveTime;
-            html += "<br/>" + "rotation = " + snakeRot;
+            if (packetTime.length >= 3) {
+                html += "<br/>"     + "packet timing = " +
+                    packetTime[0].padStartHTML(6) +
+                    packetTime[1].padStartHTML(6) +
+                    packetTime[2].padStartHTML(6);
+            }
+            html += "<br/>"     + "move timing = " + moveTime;
+            if (snakeRot.length >= 4) {
+                html += "<br/>" + "rotation input = " +
+                    "dir " + snakeRot[0].toFixed(2).padStartHTML(8) +
+                    ", ang " + snakeRot[1].toFixed(2).padStartHTML(8) +
+                    ", wang " + snakeRot[2].toFixed(2).padStartHTML(8) +
+                    ", sp " + snakeRot[3].toFixed(2).padStartHTML(8);
+            }
+            html += "<br/>" + "rotation = " +
+                    "ang " + snake.ang.toFixed(2).padStartHTML(8) +
+                    ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
+                    ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
+                    ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
+                    ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
+                    ", sp " + snake.sp.toFixed(2).padStartHTML(8);
             // fam - 0..1 ratio to the next body increment
             // sct - live body parts count
-            html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam, snake.sct);
-            html += "<br/>" + "sp = {0}, tsp = {1}, fsp = {2}, sfr = {3}, msl = {4}".format(snake.sp, snake.tsp, snake.fsp, snake.sfr, snake.msl);
+            html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam.toFixed(2).padStartHTML(6), snake.sct);
+            html += "<br/>" + "sp = {0}, tsp = {1}, fsp = {2}, sfr = {3}, msl = {4}".format(
+                snake.sp.toFixed(2).padStartHTML(6),
+                snake.tsp.toFixed(2).padStartHTML(6),
+                snake.fsp.toFixed(2).padStartHTML(6),
+                snake.sfr.toFixed(2).padStartHTML(6),
+                snake.msl);
             html += "<br/>" + "fltg = {0}".format(snake.fltg);
-            html += "<br/>" + "spang = {0}, sc = {1}, scang = {2}".format(snake.spang, snake.sc, snake.scang);
-            html += "<br/>" + "chl = {0}".format(snake.chl);
+            html += "<br/>" + "spang = {0}, sc = {1}, scang = {2}".format(
+                snake.spang.toFixed(2).padStartHTML(6),
+                snake.sc.toFixed(2).padStartHTML(6),
+                snake.scang.toFixed(2).padStartHTML(6));
+            html += "<br/>" + "chl = {0}".format(snake.chl.toFixed(2).padStartHTML(6));
         }
         debugHUD.innerHTML = html;
     };
@@ -417,7 +484,7 @@ function appendDiv(id, className, style) {
 
                 var packetType = String.fromCharCode(c[2]); // packet type
                 var i = 3; // next byte
-               
+
                 var playerSnakeId = window.snake ? window.snake.id : 0;
                 var xx = 0, yy = 0;
 
@@ -700,14 +767,16 @@ function appendDiv(id, className, style) {
                     }
                 }
 
-                drawPoints(snakePos, 2, "#FFFFFF");
+                if (draw) {
+                    drawPoints(snakePos, 2, "#FFFFFF");
 
-                // Snake parts
-                for (var pi in snake.pts) {
-                    var part = snake.pts[pi];
-                    var pos = new Vector2(part.xx, part.yy);
-                    drawLineOverlay2(pos, pos.add(new Vector2(part.ebx, part.eby)), 1, "#F0F0FF");
-                    drawLineOverlay2(pos, pos.add(new Vector2(part.fx, part.fy)), 1, "#FF0000");
+                    // Snake parts
+                    for (var pi in snake.pts) {
+                        var part = snake.pts[pi];
+                        var pos = new Vector2(part.xx, part.yy);
+                        drawLineOverlay2(pos, pos.add(new Vector2(part.ebx, part.eby)), 1, "#F0F0FF");
+                        drawLineOverlay2(pos, pos.add(new Vector2(part.fx, part.fy)), 1, "#FF0000");
+                    }
                 }
             }
         } catch (e) {
