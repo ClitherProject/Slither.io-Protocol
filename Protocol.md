@@ -302,7 +302,7 @@ Removes the last part from this snake.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-7|int24|snake.fam (value / 16777215))|
+|5-7|int24|snake.fam fullness (value / 16777215))|
 
 <a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Move snake)</h4></a>
 
@@ -363,7 +363,7 @@ Starting at byte 6 are the top ten players.
 |3|int8|local players rank in leaderboard (0 means not in leaderboard, otherwise this is equal to the "local players rank". Actually always redundant information)|
 |4-5|int16|local players rank|
 |6-7|int16|players on server count|
-|?-?|int16|snake body parts count|
+|?-?|int16|snake body parts count (sct)|
 |?-?|int24|snake last body part fullness (fam / 16777215)|
 |?-?|int8|font color (between 0 and 8)|
 |?-?|int8|username length|
@@ -407,13 +407,15 @@ Packet "m" is required for displaying the global highscore
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|3-5|int24|J (for snake length calculation)|
-|6-8|int24|I (for snake length calculation; value / 16777215)|
+|3-5|int24|snake body parts count (sct)|
+|6-8|int24|snake last body part fullness (fam / 16777215)|
 |9|int8|The length of the winners name|
 |10-?|string|Winners name|
 |?-?|string|Winners message|
 
-snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
+Snake score / length:
+
+        Math.floor(15 * (fpsls[snake.sct] + snake.fam / fmlts[snake.sct] - 1) - 5) / 1
 
 
 <a name="type_u_detail" href="#type_u_detail"><h4>Packet "u" (Update minimap)</h4></a>
@@ -421,7 +423,7 @@ snake length = Math.floor(150 * (fpsls[J] + I / fmlts[J] - 1) - 50) / 10;
 Sent when the minimap is updated.
 
 Hints for parsing the data:
-* The minimap has a size of 80*80
+* The minimap has a size of 80\*80
 * Start at the top-left, go to the right, when at the right, repeat for the next row and so on
 * Start reading the packet at index 3
 * Read one byte:
@@ -448,20 +450,21 @@ Sent when another snake enters range.
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
-|5-7|int24|Snake stop? value * 2*Math.PI / 16777215|
+|5-7|int24|Snake ehang / wehang (value \* 2 \* Math.PI / 16777215)|
 |8|int8|Unused. The 8. Byte is Unused in the game code. But the Server sends it filled with a value. Maybe we miss something here?|
-|9-11|int24|value * 2*Math.PI / 16777215 snake.eang and snake.wang (Possibly angles of the snake)|
-|12-13|int16|value / 1E3 current speed of snake|
-|14-16|int24|value / 16777215|
+|9-11|int24|Snake angle eang / wang (value \* 2 \* Math.PI / 16777215)|
+|12-13|int16|Snake speed (value / 1E3)|
+|14-16|int24|Snake last body part fullness (fam / 16777215)|
 |17|int8|Snake skin (between 9 or 0? and 21)|
-|18-20|int24|value/ 5  snake X pos|
+|18-20|int24|value / 5 snake X pos|
 |21-23|int24|value / 5 snake Y pos|
 |24|int8|Name length|
 |25+Name length|string|Snake nickname|
-|?|int24|Possibly head position (x)|
-|?|int24|Possibly head position (y)|
-|?|int8|Body part position (x)|
-|?|int8|Body part position (y)|
+|?|int24|First body part position in absolute coords (x / 5)|
+|?|int24|First body part position in absolute coords (y / 5)|
+|?|int8|Next body part position in relative coords from prev. element (x - 127) / 2|
+|?|int8|Next body part position in relative coords from prev. element (y - 127) / 2|
+
 The last two bytes repeat for each body part.
 
 
