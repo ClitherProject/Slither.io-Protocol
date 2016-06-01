@@ -613,7 +613,7 @@ This packet is sent before sending the ping packet to the server. The setup pack
 
 
 ### Packet Ping
-Pings the server and ask for new data.
+Pings the server. Sent every 250ms, but not before a pong has been received after the last ping.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
