@@ -472,7 +472,7 @@ function appendDiv(id, className, style) {
         114: "Rot right",
         253: "Fast",
         254: "Slow",
-        255: "SetVictoryMessag"
+        255: "SetVictoryMessage"
     };
 
     var ssgOriginal = window.startShowGame;
@@ -712,10 +712,15 @@ function appendDiv(id, className, style) {
                     }
                 } else {
                     var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
-                    if (log && (!filter || playerSnakeId == snakeId)) {
+                    if (log && (!filter || playerSnakeId == snakeId || !snakeId)) {
                         if (!os[snakeId]) { snakeId = 0; }
-                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, snake s{4}"
-                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], snakeId));
+                        if (snakeId) {
+                            console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, snake s{4}"
+                                .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], snakeId));
+                        } else {
+                            console.info("{0} (srv {1}ms | cl {2}ms): packet {3}"
+                                .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType]));
+                        }
                     }
                 }
             }
