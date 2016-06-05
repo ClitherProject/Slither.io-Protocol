@@ -124,6 +124,8 @@ function appendDiv(id, className, style) {
     var moveTime = [];
     var snakePos = [];
     var snakeRot = [ /* dir = -1, ang = -1, wang = -1, sp = -1 */];
+    var moveFreq = [];
+    var rotFreq = [];
 
     var positionHUD = null;
     var ipHUD = null;
@@ -259,12 +261,12 @@ function appendDiv(id, className, style) {
                     ", sp " + snakeRot[3].toFixed(2).padStartHTML(8);
             }
             html += "<br/>" + "rotation = " +
-                "ang " + snake.ang.toFixed(2).padStartHTML(8) +
-                ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
-                ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
-                ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
-                ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
-                ", sp " + snake.sp.toFixed(2).padStartHTML(8);
+                    "ang " + snake.ang.toFixed(2).padStartHTML(8) +
+                    ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
+                    ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
+                    ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
+                    ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
+                    ", sp " + snake.sp.toFixed(2).padStartHTML(8);
             // fam - 0..1 ratio to the next body increment
             // sct - live body parts count
             html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam.toFixed(2).padStartHTML(6), snake.sct);
@@ -280,6 +282,45 @@ function appendDiv(id, className, style) {
                     snake.sc.toFixed(2).padStartHTML(6),
                     snake.scang.toFixed(2).padStartHTML(6));
             html += "<br/>" + "chl = {0}".format(snake.chl.toFixed(2).padStartHTML(6));
+            if (moveFreq) {
+                var dt = 0;
+                var dv = 0;
+                for (var i in moveFreq) {
+                    dt += moveFreq[i][0];
+                    dv += moveFreq[i][1];
+                }
+                dt /= moveFreq.length;
+                dv /= moveFreq.length;
+                html += "<br/>" + "mov_dt/avg = {0}ms, mov_dv/avg = {1}".format(
+                    dt.toFixed(2).padStartHTML(6),
+                    dv.toFixed(2).padStartHTML(6));
+            }
+            if (rotFreq) {
+                var dt = 0;
+                var dv = 0;
+                var prev = 0, dv_count = 0, max = 0;
+                for (var i in rotFreq) {
+                    if (!prev) {
+                        prev = rotFreq[0];
+                    } else {
+                        dt += rotFreq[i][0] - prev[0];
+                        dv += rotFreq[i][1];
+                        if (rotFreq[i][1] != 0) {
+                            dv_count ++;
+                        }
+                        if (rotFreq[i][1] > max) {
+                            max = rotFreq[i][1];
+                        }
+                        prev = rotFreq[i];
+                    }
+                }
+                dt /= rotFreq.length - 1;
+                dv /= dv_count;
+                html += "<br/>" + "rot_dt/avg = {0}ms, rot_dv/avg = {1}, max = {2}".format(
+                        dt.toFixed(2).padStartHTML(6),
+                        dv.toFixed(2).padStartHTML(6),
+                        max.toFixed(2).padStartHTML(6));
+            }
         }
         debugHUD.innerHTML = html;
     };
@@ -552,7 +593,11 @@ function appendDiv(id, className, style) {
                             moveTime[0] = Date.now();
 
                             moveTime[2] = Math.round(snakePos[last - 2].sub(snakePos[last - 1]).magnitude()); // offset per step
-                            moveTime[3] = Math.round(moveTime[2] * 200 / moveTime[1]); // normalized step speed to 200ms
+                        }
+
+                        moveFreq.push([moveTime[1], moveTime[2]]);
+                        if (moveFreq.length > 20) {
+                            moveFreq.shift();
                         }
 
                         if (snakePos.length > 20) {
@@ -686,6 +731,16 @@ function appendDiv(id, className, style) {
 
                     if (snake == window.snake) {
                         snakeRot = [dir, ang, wang, sp];
+                        
+                        if (-1 != ang) {
+                            rotFreq.push([new Date(), Math.abs(ang - snake.ang)]);
+                        } else {
+                            rotFreq.push([new Date(), 0]);
+                        }
+                        
+                        if (rotFreq.length > 21) {
+                            rotFreq.shift();
+                        }
                     }
                 } else if ("W" == packetType) {
                     xx = c[i]; i ++;
