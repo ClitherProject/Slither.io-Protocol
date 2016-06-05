@@ -624,7 +624,7 @@ The client sends this packet to the server when it receives a mouseMove, mouseDo
 
 |Bytes|Data type|Value|Description|
 |-----|---------|-----|-----------|
-|0|int8|0-250|mouseMove: the input angle. Counter-clockwise, (0 and 250 point right, 62 points up)|
+|0|int8|0-250|mouseMove: the input angle. Clockwise, y-axes looks down the screen|
 |0|int8|252|keyDown, keyUp (left-arrow or right-arrow): start/stop turning left or right|
 |0|int8|253|mouseDown, keyDown (space or up-arrow): the snake is entering speed mode|
 |0|int8|254|mouseUp, keyUp (space or up-arrow): the snake is leaving speed mode|
