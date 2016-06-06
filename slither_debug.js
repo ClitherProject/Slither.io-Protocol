@@ -56,39 +56,39 @@ var Vector2 = (function() {
 })();
 
 if (!String.prototype.format) {
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined' ? args[number] : match
-      ;
-    });
-  };
+    String.prototype.format = function() {
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function(match, number) {
+            return typeof args[number] != 'undefined' ? args[number] : match
+                ;
+        });
+    };
 }
 
 if (!String.prototype.padStart) {
-  String.prototype.padStart = function(targetLength) {
-    return " ".repeat(Math.max(0, targetLength - this.length)) + this;
-  };
+    String.prototype.padStart = function(targetLength) {
+        return " ".repeat(Math.max(0, targetLength - this.length)) + this;
+    };
 }
 
 if (!String.prototype.padStartHTML) {
-  String.prototype.padStartHTML = function(targetLength) {
-    return "&nbsp;".repeat(Math.max(0, targetLength - this.length)) + this;
-  };
+    String.prototype.padStartHTML = function(targetLength) {
+        return "&nbsp;".repeat(Math.max(0, targetLength - this.length)) + this;
+    };
 }
 
 if (!Number.prototype.padStart) {
-  Number.prototype.padStart = function(targetLength) {
-    var s = this.toString();
-    return " ".repeat(Math.max(0, targetLength - s.length)) + s;
-  };
+    Number.prototype.padStart = function(targetLength) {
+        var s = this.toString();
+        return " ".repeat(Math.max(0, targetLength - s.length)) + s;
+    };
 }
 
 if (!Number.prototype.padStartHTML) {
-  Number.prototype.padStartHTML = function(targetLength) {
-    var s = this.toString();
-    return "&nbsp;".repeat(Math.max(0, targetLength - s.length)) + s;
-  };
+    Number.prototype.padStartHTML = function(targetLength) {
+        var s = this.toString();
+        return "&nbsp;".repeat(Math.max(0, targetLength - s.length)) + s;
+    };
 }
 
 function appendDiv(id, className, style) {
@@ -115,7 +115,7 @@ function appendDiv(id, className, style) {
     var snakeDirV = new Vector2(0,0);
     var snakePosV = new Vector2(0,0);
 
-    var enabled = true;
+    var enabled = false;
     var draw = true;
     var log = false;
     var filter = false;
@@ -124,8 +124,9 @@ function appendDiv(id, className, style) {
     var moveTime = [];
     var snakePos = [];
     var snakeRot = [ /* dir = -1, ang = -1, wang = -1, sp = -1 */];
+    var moveFreq = [];
+    var rotFreq = [];
 
-    var gameFPS = null;
     var positionHUD = null;
     var ipHUD = null;
     var fpsHUD = null;
@@ -186,9 +187,9 @@ function appendDiv(id, className, style) {
                 document.body.appendChild(window.pfd);
             }
 
-            testing = !testing;
+            window.testing = !window.testing;
 
-            if (testing) {
+            if (window.testing) {
                 pfd.style.display = "block";
             } else {
                 pfd.style.display = "none";
@@ -270,17 +271,56 @@ function appendDiv(id, className, style) {
             // sct - live body parts count
             html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam.toFixed(2).padStartHTML(6), snake.sct);
             html += "<br/>" + "sp = {0}, tsp = {1}, fsp = {2}, sfr = {3}, msl = {4}".format(
-                snake.sp.toFixed(2).padStartHTML(6),
-                snake.tsp.toFixed(2).padStartHTML(6),
-                snake.fsp.toFixed(2).padStartHTML(6),
-                snake.sfr.toFixed(2).padStartHTML(6),
-                snake.msl);
+                    snake.sp.toFixed(2).padStartHTML(6),
+                    snake.tsp.toFixed(2).padStartHTML(6),
+                    snake.fsp.toFixed(2).padStartHTML(6),
+                    snake.sfr.toFixed(2).padStartHTML(6),
+                    snake.msl);
             html += "<br/>" + "fltg = {0}".format(snake.fltg);
             html += "<br/>" + "spang = {0}, sc = {1}, scang = {2}".format(
-                snake.spang.toFixed(2).padStartHTML(6),
-                snake.sc.toFixed(2).padStartHTML(6),
-                snake.scang.toFixed(2).padStartHTML(6));
+                    snake.spang.toFixed(2).padStartHTML(6),
+                    snake.sc.toFixed(2).padStartHTML(6),
+                    snake.scang.toFixed(2).padStartHTML(6));
             html += "<br/>" + "chl = {0}".format(snake.chl.toFixed(2).padStartHTML(6));
+            if (moveFreq) {
+                var dt = 0;
+                var dv = 0;
+                for (var i in moveFreq) {
+                    dt += moveFreq[i][0];
+                    dv += moveFreq[i][1];
+                }
+                dt /= moveFreq.length;
+                dv /= moveFreq.length;
+                html += "<br/>" + "mov_dt/avg = {0}ms, mov_dv/avg = {1}".format(
+                    dt.toFixed(2).padStartHTML(6),
+                    dv.toFixed(2).padStartHTML(6));
+            }
+            if (rotFreq) {
+                var dt = 0;
+                var dv = 0;
+                var prev = 0, dv_count = 0, max = 0;
+                for (var i in rotFreq) {
+                    if (!prev) {
+                        prev = rotFreq[0];
+                    } else {
+                        dt += rotFreq[i][0] - prev[0];
+                        dv += rotFreq[i][1];
+                        if (rotFreq[i][1] != 0) {
+                            dv_count ++;
+                        }
+                        if (rotFreq[i][1] > max) {
+                            max = rotFreq[i][1];
+                        }
+                        prev = rotFreq[i];
+                    }
+                }
+                dt /= rotFreq.length - 1;
+                dv /= dv_count;
+                html += "<br/>" + "rot_dt/avg = {0}ms, rot_dv/avg = {1}, max = {2}".format(
+                        dt.toFixed(2).padStartHTML(6),
+                        dv.toFixed(2).padStartHTML(6),
+                        max.toFixed(2).padStartHTML(6));
+            }
         }
         debugHUD.innerHTML = html;
     };
@@ -465,9 +505,38 @@ function appendDiv(id, className, style) {
         k: "Kill (unused in the game-code)"
     };
 
+    var outPacketTypes = {
+        115: "SetUsernameAndSkin",
+        251: "Ping",
+        252: "Key",
+        108: "Rot left",
+        114: "Rot right",
+        253: "Fast",
+        254: "Slow",
+        255: "SetVictoryMessage"
+    };
+
     var ssgOriginal = window.startShowGame;
     window.startShowGame = function() {
         ssgOriginal();
+
+        var sendOriginal = ws.send;
+        ws.send = function() {
+            sendOriginal.apply(ws, arguments);
+            if (log) {
+                var data = new Uint8Array(arguments[0]);
+                var len = data.length;
+                var type = data[0];
+                if (type <= 250 && len == 1) {
+                    console.info("{0} << packet angle {1}".format(Date.now(), 2.0 * 3.14 * type / 250));
+                } else {
+                    var typeString = outPacketTypes[type];
+                    if (!typeString) { typeString = "" + type; }
+                    console.info("{0} << packet {1}, len {2}".format(Date.now(), typeString, len));
+                }
+            }
+        };
+        
         var onmessageOriginal = ws.onmessage;
         ws.onmessage = function(msg) {
             var c = new Uint8Array(msg.data);
@@ -507,9 +576,9 @@ function appendDiv(id, className, style) {
                         yy = (c[i] << 16 | c[i + 1] << 8 | c[i + 2]) / 5; i += 3;
                     }
 
-                    if (log && (!filter || playerSnakeId)) {
-                        console.info("{0} ({1}ms): packet {2}, snake s{3} [{4}]"
-                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId, [xx, yy]));
+                    if (log && (!filter || playerSnakeId == snakeId)) {
+                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, snake s{4} [{5}]"
+                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], snakeId, [xx, yy]));
                     }
 
                     if (snake == window.snake) {
@@ -524,7 +593,11 @@ function appendDiv(id, className, style) {
                             moveTime[0] = Date.now();
 
                             moveTime[2] = Math.round(snakePos[last - 2].sub(snakePos[last - 1]).magnitude()); // offset per step
-                            moveTime[3] = Math.round(moveTime[2] * 200 / moveTime[1]); // normalized step speed to 200ms
+                        }
+
+                        moveFreq.push([moveTime[1], moveTime[2]]);
+                        if (moveFreq.length > 20) {
+                            moveFreq.shift();
                         }
 
                         if (snakePos.length > 20) {
@@ -651,21 +724,31 @@ function appendDiv(id, className, style) {
                         }
                     }
 
-                    if (log && (!filter || playerSnakeId)) {
-                        console.info("{0} ({1}ms): packet {2}, snake s{3} [dir = {4}, ang = {5}, wang = {6}, sp = {7}, dAng = {8}, spang = {9}]"
-                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId, dir, ang, wang, sp, dAng, spang));
+                    if (log && (!filter || playerSnakeId == snakeId)) {
+                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, snake s{4} [dir = {5}, ang = {6}, wang = {7}, sp = {8}, dAng = {9}, spang = {10}]"
+                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], snakeId, dir, ang, wang, sp, dAng, spang));
                     }
 
                     if (snake == window.snake) {
                         snakeRot = [dir, ang, wang, sp];
+                        
+                        if (-1 != ang) {
+                            rotFreq.push([new Date(), Math.abs(ang - snake.ang)]);
+                        } else {
+                            rotFreq.push([new Date(), 0]);
+                        }
+                        
+                        if (rotFreq.length > 21) {
+                            rotFreq.shift();
+                        }
                     }
                 } else if ("W" == packetType) {
                     xx = c[i]; i ++;
                     yy = c[i]; i ++;
 
-                    if (log && (!filter || playerSnakeId)) {
-                        console.info("{0} ({1}ms): packet {2}, [{3}]"
-                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], [xx, yy]));
+                    if (log) {
+                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, [{4}]"
+                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], [xx, yy]));
                     }
                 } else if ("w" == packetType) {
                     if (8 <= protocol_version) {
@@ -678,15 +761,21 @@ function appendDiv(id, className, style) {
                         yy = c[i] << 8 | c[i + 1]; i += 2;
                     }
 
-                    if (log && (!filter || playerSnakeId)) {
-                        console.info("{0} ({1}ms): packet {2}, [{3}]"
-                                     .format(cptm, dtm, packetType + "/" + packetTypes[packetType], [xx, yy]));
+                    if (log) {
+                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, [{5}]"
+                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], [xx, yy]));
                     }
                 } else {
-                    if (log && (!filter || playerSnakeId)) {
-                        var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
+                    var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
+                    if (log && (!filter || playerSnakeId == snakeId || !snakeId)) {
                         if (!os[snakeId]) { snakeId = 0; }
-                        console.info("{0} ({1}ms): packet {2}, snake s{3}".format(cptm, dtm, packetType + "/" + packetTypes[packetType], snakeId));
+                        if (snakeId) {
+                            console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, snake s{4}"
+                                .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], snakeId));
+                        } else {
+                            console.info("{0} (srv {1}ms | cl {2}ms): packet {3}"
+                                .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType]));
+                        }
                     }
                 }
             }
@@ -751,7 +840,7 @@ function appendDiv(id, className, style) {
                 snakePosV = newSnakePosV;
 
                 // Snake Position
-                drawLineOverlay(snakePosV.add(snakeDirV.scalarMul(10)), 1, "#00FF00");
+                drawLineOverlay(snakePosV.add(snakeDirV.scalarMul(10)), 1, "#D0FFD0");
                 // drawLineOverlay(snakePosV.add(new Vector2(snake.fx, snake.fy)), 1, "#FF0000");
 
                 if (snakeRot.length > 0) {
