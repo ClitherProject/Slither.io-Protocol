@@ -460,10 +460,10 @@ Sent when another snake enters range.
 |21-23|int24|value / 5 snake Y pos|
 |24|int8|Name length|
 |25+Name length|string|Snake nickname|
-|?|int24|First body part position in absolute coords (x / 5)|
-|?|int24|First body part position in absolute coords (y / 5)|
-|?|int8|Next body part position in relative coords from prev. element (x - 127) / 2|
-|?|int8|Next body part position in relative coords from prev. element (y - 127) / 2|
+|?|int24|Last snake body part (tail) position in absolute coords (x / 5)|
+|?|int24|Last snake body part (tail) position in absolute coords (y / 5)|
+|?|int8|Next position in relative coords from prev. element (x - 127) / 2|
+|?|int8|Next position in relative coords from prev. element (y - 127) / 2|
 
 The last two bytes repeat for each body part.
 
@@ -538,8 +538,8 @@ Next follow updates for one or more of these variables:
 |Data type|Description|
 |---------|-----------|
 |int8|value - 48 -> direction (0: not turning; 1: turning counter-clockwise; 2: turning clockwise)|
-|int24|value * 2*PI / 16777215 -> current angle|
-|int24|value * 2*PI / 16777215 -> wanted angle (angle the prey turns towards)|
+|int24|value * 2 * PI / 16777215 -> current angle|
+|int24|value * 2 * PI / 16777215 -> wanted angle (angle the prey turns towards)|
 |int16|value / 1000 -> speed|
 
 Depending on the packet-length, different variables are sent:
@@ -580,8 +580,8 @@ The exact event/format depends on the packet-length:
 |9-11|int24|value / 5 -> y|
 |12|int8|value / 5 -> size|
 |13|int8|value - 48 -> direction (see packet "j")|
-|14-16|int24|value * 2*PI / 16777215 -> wanted angle|
-|17-19|int24|value * 2*PI / 16777215 -> current angle|
+|14-16|int24|value * 2 * PI / 16777215 -> wanted angle|
+|17-19|int24|value * 2 * PI / 16777215 -> current angle|
 |20-21|int16|value / 1000 -> speed|
 
 
@@ -625,12 +625,12 @@ The client sends this packet to the server when it receives a mouseMove, mouseDo
 |Bytes|Data type|Value|Description|
 |-----|---------|-----|-----------|
 |0|int8|0-250|mouseMove: the input angle. Clockwise, y-axes looks down the screen|
-|0|int8|252|keyDown, keyUp (left-arrow or right-arrow): start/stop turning left or right|
+|0|int8|252|keyDown, keyUp (left-arrow or right-arrow): turning left or right|
 |0|int8|253|mouseDown, keyDown (space or up-arrow): the snake is entering speed mode|
 |0|int8|254|mouseUp, keyUp (space or up-arrow): the snake is leaving speed mode|
-|1|int8|0-255|unknown, only used if first byte is 252|
+|1|int8|0-255|virtual (8ms) frames of counted rotation (0-127 left turns, 128-255 right turns, used when 1st byte is 252)|
 
-angle in radians = value * pi/125
+angle in radians = 2pi * value / 250
 
 ### Packet SaveVictoryMessage
 When you have the longest snake of the day, you're able to send a victory message.
