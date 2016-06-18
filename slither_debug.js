@@ -126,6 +126,7 @@ function appendDiv(id, className, style) {
     var snakeRot = [ /* dir = -1, ang = -1, wang = -1, sp = -1 */];
     var moveFreq = [];
     var rotFreq = [];
+    var debugData = {};
 
     var positionHUD = null;
     var ipHUD = null;
@@ -261,12 +262,12 @@ function appendDiv(id, className, style) {
                     ", sp " + snakeRot[3].toFixed(2).padStartHTML(8);
             }
             html += "<br/>" + "rotation = " +
-                    "ang " + snake.ang.toFixed(2).padStartHTML(8) +
-                    ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
-                    ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
-                    ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
-                    ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
-                    ", sp " + snake.sp.toFixed(2).padStartHTML(8);
+                "ang " + snake.ang.toFixed(2).padStartHTML(8) +
+                ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
+                ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
+                ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
+                ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
+                ", sp " + snake.sp.toFixed(2).padStartHTML(8);
             // fam - 0..1 ratio to the next body increment
             // sct - live body parts count
             html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam.toFixed(2).padStartHTML(6), snake.sct);
@@ -292,8 +293,8 @@ function appendDiv(id, className, style) {
                 dt /= moveFreq.length;
                 dv /= moveFreq.length;
                 html += "<br/>" + "mov_dt/avg = {0}ms, mov_dv/avg = {1}".format(
-                    dt.toFixed(2).padStartHTML(6),
-                    dv.toFixed(2).padStartHTML(6));
+                        dt.toFixed(2).padStartHTML(6),
+                        dv.toFixed(2).padStartHTML(6));
             }
             if (rotFreq) {
                 var dt = 0;
@@ -321,6 +322,7 @@ function appendDiv(id, className, style) {
                         dv.toFixed(2).padStartHTML(6),
                         max.toFixed(2).padStartHTML(6));
             }
+            html += "<br/>" + "etm = {0}".format(etm.toFixed(2).padStartHTML(6));
         }
         debugHUD.innerHTML = html;
     };
@@ -456,7 +458,7 @@ function appendDiv(id, className, style) {
 
         ctx.beginPath();
         at = getDrawPosition(at);
-        ctx.fillRect(p.x, p.y, thickness, thickness);
+        ctx.rect(at.x, at.y, thickness, thickness);
         ctx.stroke();
     };
 
@@ -470,9 +472,45 @@ function appendDiv(id, className, style) {
         ctx.beginPath();
         for each (var p in pts) {
             p = getDrawPosition(p);
-            ctx.fillRect(p.x, p.y, thickness, thickness);
+            ctx.rect(p.x, p.y, thickness, thickness);
         }
         ctx.stroke();
+    };
+
+    var drawDebug = function(data) {
+        var canvas = document.getElementsByTagName("canvas")[2];
+        var ctx = canvas.getContext("2d");
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#FFFFFF';
+
+        for (var k in data) {
+            var v = data[k];
+            if (v.type == '.') {
+                ctx.beginPath();
+                ctx.strokeStyle = '#FFFFFF';
+                var p = getDrawPosition(v.v);
+                ctx.moveTo(p.x, p.y);
+                ctx.rect(p.x, p.y, 1, 1);
+                ctx.stroke();
+            } else if (v.type == '_' && v.color) {
+                ctx.beginPath();
+                var chex = v.color.toString(16);
+                ctx.strokeStyle = '#' + chex + chex + chex;
+                var p = getDrawPosition(v.v);
+                ctx.moveTo(p.x, p.y);
+                var p = getDrawPosition(v.w);
+                ctx.lineTo(p.x, p.y);
+                ctx.stroke();
+            } else if (v.type == 'o' && v.color) {
+                ctx.beginPath();
+                var chex = v.color.toString(16);
+                ctx.strokeStyle = '#' + chex + chex + chex;
+                var p = getDrawPosition(v.v);
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, v.r * gsc, 0, 2 * Math.PI, false);
+                ctx.stroke();
+            }
+        }
     };
 
     var packetTypes = {
@@ -502,7 +540,10 @@ function appendDiv(id, className, style) {
         c: "Food eaten",
         j: "Update Prey",
         y: "Add/remove Prey",
-        k: "Kill (unused in the game-code)"
+        k: "Kill (unused in the game-code)",
+
+        "0": "Reset debug",
+        "!": "Draw debug",
     };
 
     var outPacketTypes = {
@@ -536,7 +577,7 @@ function appendDiv(id, className, style) {
                 }
             }
         };
-        
+
         var onmessageOriginal = ws.onmessage;
         ws.onmessage = function(msg) {
             var c = new Uint8Array(msg.data);
@@ -603,6 +644,17 @@ function appendDiv(id, className, style) {
                         if (snakePos.length > 20) {
                             snakePos.shift();
                         }
+                        /*
+                         var newSnakePosV = new Vector2(xx, yy);
+                         snakeDirV = newSnakePosV.sub(snakePosV);
+
+                         if (snake) {
+                         var l = snakeDirV.scalarMul(10).magnitude();
+                         //if (l > 200) {
+                         var t = (etm / 8 * snake.sp / 4) * lag_mult;
+                         console.log(snakeDirV.scalarMul(10).magnitude() + ", etm = " + etm, ", t = " + t);
+                         //}
+                         }*/
                     }
                 } else if ("e" == packetType || "E" == packetType || "3" == packetType || "4" == packetType || "5" == packetType) {
                     const left = 1;
@@ -731,13 +783,13 @@ function appendDiv(id, className, style) {
 
                     if (snake == window.snake) {
                         snakeRot = [dir, ang, wang, sp];
-                        
+
                         if (-1 != ang) {
                             rotFreq.push([new Date(), Math.abs(ang - snake.ang)]);
                         } else {
                             rotFreq.push([new Date(), 0]);
                         }
-                        
+
                         if (rotFreq.length > 21) {
                             rotFreq.shift();
                         }
@@ -765,6 +817,72 @@ function appendDiv(id, className, style) {
                         console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, [{5}]"
                             .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType], [xx, yy]));
                     }
+                } else if ("0" == packetType) {
+                    debugData = {};
+
+                    if (log) {
+                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}"
+                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes[packetType]));
+                    }
+
+                    return;
+                } else if ("!" == packetType) {
+                    var count = 0;
+
+                    while (i < c.length) {
+                        packetType = String.fromCharCode(c[i]); i ++;
+                        count ++;
+
+                        if (packetType == '.') {
+                            var id = c[i] << 8 | c[i + 1]; i += 2;
+                            var vx = c[i] << 8 | c[i + 1]; i += 2;
+                            var vy = c[i] << 8 | c[i + 1]; i += 2;
+                            if (id > 0) {
+                                debugData[id] = {
+                                    'type': '.',
+                                    'v': new Vector2(vx, vy),
+                                    'color': 255
+                                };
+                            }
+                        } else if (packetType == '_') {
+                            var id = c[i] << 8 | c[i + 1]; i += 2;
+                            var vx = c[i] << 8 | c[i + 1]; i += 2;
+                            var vy = c[i] << 8 | c[i + 1]; i += 2;
+                            var wx = c[i] << 8 | c[i + 1]; i += 2;
+                            var wy = c[i] << 8 | c[i + 1]; i += 2;
+                            var color = c[i]; i ++;
+                            if (id > 0) {
+                                debugData[id] = {
+                                    'type': '_',
+                                    'v': new Vector2(vx, vy),
+                                    'w': new Vector2(wx, wy),
+                                    'color': color,
+                                };
+                            }
+                        } else if (packetType == 'o') {
+                            var id = c[i] << 8 | c[i + 1]; i += 2;
+                            var vx = c[i] << 8 | c[i + 1]; i += 2;
+                            var vy = c[i] << 8 | c[i + 1]; i += 2;
+                            var r2 = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
+                            var color = c[i]; i ++;
+                            if (id > 0) {
+                                debugData[id] = {
+                                    'type': 'o',
+                                    'v': new Vector2(vx, vy),
+                                    'r': Math.sqrt(r2),
+                                    'color': color,
+                                };
+                            }
+                        }
+                    }
+
+                    if (log) {
+                        debugger;
+                        console.info("{0} (srv {1}ms | cl {2}ms): packet {3}, count {4}"
+                            .format(cptm, dtm, cltm, packetType + "/" + packetTypes["!"], count));
+                    }
+
+                    return;
                 } else {
                     var snakeId = c[i] << 8 | c[i + 1]; i += 2; // snake id
                     if (log && (!filter || playerSnakeId == snakeId || !snakeId)) {
@@ -839,25 +957,35 @@ function appendDiv(id, className, style) {
                 snakeDirV = newSnakePosV.sub(snakePosV);
                 snakePosV = newSnakePosV;
 
-                // Snake Position
-                drawLineOverlay(snakePosV.add(snakeDirV.scalarMul(10)), 1, "#D0FFD0");
-                // drawLineOverlay(snakePosV.add(new Vector2(snake.fx, snake.fy)), 1, "#FF0000");
-
-                if (snakeRot.length > 0) {
-                    // ang = current snake angle
-                    var ang = snakeRot[1];
-                    if (ang != -1) {
-                        drawLineOverlay(newSnakePosV.add(new Vector2(Math.cos(ang), Math.sin(ang)).scalarMul(50)), 1, "#FF0000");
-                    }
-                    // wang = target angle
-                    var wang = snakeRot[2];
-                    if (wang != -1) {
-                        drawLineOverlay(newSnakePosV.add(new Vector2(Math.cos(wang), Math.sin(wang)).scalarMul(50)), 1, "#0000FF");
-                    }
-                }
-
                 if (draw) {
+                    // Snake Position
+                    drawLineOverlay(snakePosV.add(snakeDirV.scalarMul(10)), 1, "#D0FFD0");
                     drawPoints(snakePos, 2, "#FFFFFF");
+
+                    /*
+                     if (snake) {
+                     var l = snakeDirV.scalarMul(10).magnitude();
+                     if (l > 100) {
+                     var t = (etm / 8 * snake.sp / 4) * lag_mult;
+                     console.log(snakeDirV.scalarMul(10).magnitude() + ", etm = " + etm, ", t = " + t);
+                     }
+                     }*/
+
+                    // drawLineOverlay(snakePosV.add(new Vector2(snake.fx, snake.fy)), 1, "#FF0000");
+
+                    // Snake angles
+                    if (snakeRot.length > 0) {
+                        // ang = current snake angle
+                        var ang = snakeRot[1];
+                        if (ang != -1) {
+                            drawLineOverlay(newSnakePosV.add(new Vector2(Math.cos(ang), Math.sin(ang)).scalarMul(50)), 1, "#FF0000");
+                        }
+                        // wang = target angle
+                        var wang = snakeRot[2];
+                        if (wang != -1) {
+                            drawLineOverlay(newSnakePosV.add(new Vector2(Math.cos(wang), Math.sin(wang)).scalarMul(50)), 1, "#0000FF");
+                        }
+                    }
 
                     // Snake parts
                     for (var pi in snake.pts) {
@@ -866,6 +994,9 @@ function appendDiv(id, className, style) {
                         drawLineOverlay2(pos, pos.add(new Vector2(part.ebx, part.eby)), 1, "#F0F0FF");
                         drawLineOverlay2(pos, pos.add(new Vector2(part.fx, part.fy)), 1, "#FF0000");
                     }
+
+                    // Debug
+                    drawDebug(debugData);
                 }
             }
         } catch (e) {
