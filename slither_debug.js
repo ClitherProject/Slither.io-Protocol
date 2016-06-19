@@ -153,6 +153,10 @@ function appendDiv(id, className, style) {
     };
 
     document.addEventListener('keydown', function(e) {
+        if (e.keyCode == 48 /* 0 */) {
+            debugData = {};
+        }
+
         if (e.keyCode == 65 /* a */) {
             enabled = !enabled;
         }
@@ -244,7 +248,7 @@ function appendDiv(id, className, style) {
         html += "<br/>" + "Auto " + (enabled?"on":"off") + " - press 'a' to toggle (" + "status: " + status + ")";
         html += "<br/>" + "Log " + (log?"on":"off") + " - press 'l' to toggle, press 'f' to filter " + (filter?"on":"off");
         html += "<br/>" + "Testing " + (testing?"on":"off") + " - press 't' to toggle";
-        html += "<br/>" + "Draw debug " + (draw?"on":"off") + " - press 'g' to toggle";
+        html += "<br/>" + "Draw debug " + (draw?"on":"off") + " - press 'g' to toggle, press '0' to reset debug data";
         html += "<br/>" + "Connect to 127.0.0.1:8080 - press 'c'<br />";
         if (playing) {
             if (packetTime.length >= 3) {
@@ -262,12 +266,12 @@ function appendDiv(id, className, style) {
                     ", sp " + snakeRot[3].toFixed(2).padStartHTML(8);
             }
             html += "<br/>" + "rotation = " +
-                "ang " + snake.ang.toFixed(2).padStartHTML(8) +
-                ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
-                ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
-                ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
-                ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
-                ", sp " + snake.sp.toFixed(2).padStartHTML(8);
+                    "ang " + snake.ang.toFixed(2).padStartHTML(8) +
+                    ", wang " + snake.wang.toFixed(2).padStartHTML(8) +
+                    ", eang " + snake.eang.toFixed(2).padStartHTML(8) +
+                    ", ehang " + snake.ehang.toFixed(2).padStartHTML(8) +
+                    ", wehang " + snake.wehang.toFixed(2).padStartHTML(8) +
+                    ", sp " + snake.sp.toFixed(2).padStartHTML(8);
             // fam - 0..1 ratio to the next body increment
             // sct - live body parts count
             html += "<br/>" + "fam: {0}, sct: {1}".format(snake.fam.toFixed(2).padStartHTML(6), snake.sct);
@@ -293,8 +297,8 @@ function appendDiv(id, className, style) {
                 dt /= moveFreq.length;
                 dv /= moveFreq.length;
                 html += "<br/>" + "mov_dt/avg = {0}ms, mov_dv/avg = {1}".format(
-                        dt.toFixed(2).padStartHTML(6),
-                        dv.toFixed(2).padStartHTML(6));
+                    dt.toFixed(2).padStartHTML(6),
+                    dv.toFixed(2).padStartHTML(6));
             }
             if (rotFreq) {
                 var dt = 0;
@@ -318,9 +322,9 @@ function appendDiv(id, className, style) {
                 dt /= rotFreq.length - 1;
                 dv /= dv_count;
                 html += "<br/>" + "rot_dt/avg = {0}ms, rot_dv/avg = {1}, max = {2}".format(
-                        dt.toFixed(2).padStartHTML(6),
-                        dv.toFixed(2).padStartHTML(6),
-                        max.toFixed(2).padStartHTML(6));
+                    dt.toFixed(2).padStartHTML(6),
+                    dv.toFixed(2).padStartHTML(6),
+                    max.toFixed(2).padStartHTML(6));
             }
             html += "<br/>" + "etm = {0}".format(etm.toFixed(2).padStartHTML(6));
         }
@@ -492,7 +496,7 @@ function appendDiv(id, className, style) {
                 ctx.moveTo(p.x, p.y);
                 ctx.rect(p.x, p.y, 1, 1);
                 ctx.stroke();
-            } else if (v.type == '_' && v.color) {
+            } else if (v.type == '_') {
                 ctx.beginPath();
                 var chex = v.color.toString(16);
                 ctx.strokeStyle = '#' + chex + chex + chex;
@@ -501,7 +505,7 @@ function appendDiv(id, className, style) {
                 var p = getDrawPosition(v.w);
                 ctx.lineTo(p.x, p.y);
                 ctx.stroke();
-            } else if (v.type == 'o' && v.color) {
+            } else if (v.type == 'o') {
                 ctx.beginPath();
                 var chex = v.color.toString(16);
                 ctx.strokeStyle = '#' + chex + chex + chex;
@@ -644,17 +648,17 @@ function appendDiv(id, className, style) {
                         if (snakePos.length > 20) {
                             snakePos.shift();
                         }
-                        /*
-                         var newSnakePosV = new Vector2(xx, yy);
-                         snakeDirV = newSnakePosV.sub(snakePosV);
+/*
+                        var newSnakePosV = new Vector2(xx, yy);
+                        snakeDirV = newSnakePosV.sub(snakePosV);
 
-                         if (snake) {
-                         var l = snakeDirV.scalarMul(10).magnitude();
-                         //if (l > 200) {
-                         var t = (etm / 8 * snake.sp / 4) * lag_mult;
-                         console.log(snakeDirV.scalarMul(10).magnitude() + ", etm = " + etm, ", t = " + t);
-                         //}
-                         }*/
+                        if (snake) {
+                            var l = snakeDirV.scalarMul(10).magnitude();
+                            //if (l > 200) {
+                                var t = (etm / 8 * snake.sp / 4) * lag_mult;
+                                console.log(snakeDirV.scalarMul(10).magnitude() + ", etm = " + etm, ", t = " + t);
+                            //}
+                        }*/
                     }
                 } else if ("e" == packetType || "E" == packetType || "3" == packetType || "4" == packetType || "5" == packetType) {
                     const left = 1;
@@ -834,7 +838,7 @@ function appendDiv(id, className, style) {
                         count ++;
 
                         if (packetType == '.') {
-                            var id = c[i] << 8 | c[i + 1]; i += 2;
+                            var id = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
                             if (id > 0) {
@@ -845,7 +849,7 @@ function appendDiv(id, className, style) {
                                 };
                             }
                         } else if (packetType == '_') {
-                            var id = c[i] << 8 | c[i + 1]; i += 2;
+                            var id = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
                             var wx = c[i] << 8 | c[i + 1]; i += 2;
@@ -860,7 +864,7 @@ function appendDiv(id, className, style) {
                                 };
                             }
                         } else if (packetType == 'o') {
-                            var id = c[i] << 8 | c[i + 1]; i += 2;
+                            var id = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
                             var r2 = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
@@ -963,13 +967,13 @@ function appendDiv(id, className, style) {
                     drawPoints(snakePos, 2, "#FFFFFF");
 
                     /*
-                     if (snake) {
-                     var l = snakeDirV.scalarMul(10).magnitude();
-                     if (l > 100) {
-                     var t = (etm / 8 * snake.sp / 4) * lag_mult;
-                     console.log(snakeDirV.scalarMul(10).magnitude() + ", etm = " + etm, ", t = " + t);
-                     }
-                     }*/
+                    if (snake) {
+                        var l = snakeDirV.scalarMul(10).magnitude();
+                        if (l > 100) {
+                            var t = (etm / 8 * snake.sp / 4) * lag_mult;
+                            console.log(snakeDirV.scalarMul(10).magnitude() + ", etm = " + etm, ", t = " + t);
+                        }
+                    }*/
 
                     // drawLineOverlay(snakePosV.add(new Vector2(snake.fx, snake.fy)), 1, "#FF0000");
 
