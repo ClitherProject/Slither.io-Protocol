@@ -867,13 +867,13 @@ function appendDiv(id, className, style) {
                             var id = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
-                            var r2 = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
+                            var r = c[i] << 8 | c[i + 1]; i += 2;
                             var color = c[i]; i ++;
                             if (id > 0) {
                                 debugData[id] = {
                                     'type': 'o',
                                     'v': new Vector2(vx, vy),
-                                    'r': Math.sqrt(r2),
+                                    'r': r,
                                     'color': color,
                                 };
                             }
