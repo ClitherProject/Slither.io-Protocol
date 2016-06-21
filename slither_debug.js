@@ -491,24 +491,30 @@ function appendDiv(id, className, style) {
             var v = data[k];
             if (v.type == '.') {
                 ctx.beginPath();
-                ctx.strokeStyle = '#FFFFFF';
+                ctx.strokeStyle = v.color;
                 var p = getDrawPosition(v.v);
                 ctx.moveTo(p.x, p.y);
                 ctx.rect(p.x, p.y, 1, 1);
                 ctx.stroke();
             } else if (v.type == '_') {
                 ctx.beginPath();
-                var chex = v.color.toString(16);
-                ctx.strokeStyle = '#' + chex + chex + chex;
+                ctx.strokeStyle = v.color;
                 var p = getDrawPosition(v.v);
                 ctx.moveTo(p.x, p.y);
                 var p = getDrawPosition(v.w);
                 ctx.lineTo(p.x, p.y);
                 ctx.stroke();
+            } else if (v.type == '#') {
+                ctx.beginPath();
+                ctx.strokeStyle = v.color;
+                var p0 = getDrawPosition(v.v);
+                var p1 = getDrawPosition(v.w);
+                ctx.moveTo(p0.x, p0.y);
+                ctx.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y);
+                ctx.stroke();
             } else if (v.type == 'o') {
                 ctx.beginPath();
-                var chex = v.color.toString(16);
-                ctx.strokeStyle = '#' + chex + chex + chex;
+                ctx.strokeStyle = v.color;
                 var p = getDrawPosition(v.v);
                 ctx.moveTo(p.x, p.y);
                 ctx.arc(p.x, p.y, v.r * gsc, 0, 2 * Math.PI, false);
@@ -841,23 +847,24 @@ function appendDiv(id, className, style) {
                             var id = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
+                            var color = '#' + (c[i] << 16 | c[i + 1] << 8 | c[i + 2]).toString(16); i += 3;
                             if (id > 0) {
                                 debugData[id] = {
-                                    'type': '.',
+                                    'type': packetType,
                                     'v': new Vector2(vx, vy),
-                                    'color': 255
+                                    'color': color
                                 };
                             }
-                        } else if (packetType == '_') {
+                        } else if (packetType == '_' || packetType == '#') {
                             var id = c[i] << 16 | c[i + 1] << 8 | c[i + 2]; i += 3;
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
                             var wx = c[i] << 8 | c[i + 1]; i += 2;
                             var wy = c[i] << 8 | c[i + 1]; i += 2;
-                            var color = c[i]; i ++;
+                            var color = '#' + (c[i] << 16 | c[i + 1] << 8 | c[i + 2]).toString(16); i += 3;
                             if (id > 0) {
                                 debugData[id] = {
-                                    'type': '_',
+                                    'type': packetType,
                                     'v': new Vector2(vx, vy),
                                     'w': new Vector2(wx, wy),
                                     'color': color,
@@ -868,10 +875,10 @@ function appendDiv(id, className, style) {
                             var vx = c[i] << 8 | c[i + 1]; i += 2;
                             var vy = c[i] << 8 | c[i + 1]; i += 2;
                             var r = c[i] << 8 | c[i + 1]; i += 2;
-                            var color = c[i]; i ++;
+                            var color = '#' + (c[i] << 16 | c[i + 1] << 8 | c[i + 2]).toString(16); i += 3;
                             if (id > 0) {
                                 debugData[id] = {
-                                    'type': 'o',
+                                    'type': packetType,
                                     'v': new Vector2(vx, vy),
                                     'r': r,
                                     'color': color,
