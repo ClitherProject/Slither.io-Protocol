@@ -13,9 +13,9 @@ If you've made or found more, just add them.
 
 ### Clients
 
-|Name|Language|link|
-|----|--------|----|
-|Slyther|Java|https://github.com/gegy1000/Slyther|
-|Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|
-|MySlither|Java|https://github.com/Mat2095/MySlither|
-|Plither|JavaScript|https://github.com/PlitherProject/Plither|
+|Name|Language|link|Status|
+|----|--------|----|------|
+|Slyther|Java|https://github.com/gegy1000/Slyther|Very Active|
+|Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|Active|
+|MySlither|Java|https://github.com/Mat2095/MySlither|Active|
+|Plither|JavaScript|https://github.com/PlitherProject/Plither|Inactive|
