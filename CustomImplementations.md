@@ -10,6 +10,7 @@ If you've made or found more, just add them.
 |Clither Server|Java|https://github.com/ClitherProject/Clither-Server|Cancelled|
 |slither|JavaScript|https://github.com/iiegor/slither|Inactive|
 |JSlither|JavaScript|https://github.com/circa94/JSlither|Inactive|
+|slitherss|C++|https://github.com/sitano/slitherss|Inactive|
 
 <a id="clients"></a>
 ### Clients
