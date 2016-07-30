@@ -16,7 +16,7 @@ Most packets start like this:
     <th>Meaning</th>
   </tr>
   <tr>
-    <td>0</td><td rowspan="2">Time since last message from client</td>
+    <td>0</td><td rowspan="2">Time since last message to client</td>
   </tr>
   <tr>
     <td>1</td>
