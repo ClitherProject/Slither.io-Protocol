@@ -75,12 +75,12 @@ Tells the Client some basic information. After the message arrives, the game cal
 |-----|---------|-----------|-------|
 |3-5|int24|Game Radius|21600|
 |6-7|int16|mscps (maximum snake length in body parts units)|411|
-|8-9|int16|sector_size|480|
-|10-11|int16|sector_count_along_edge (unused in the game-code)|130|
+|8-9|int16|sector_size|300|
+|10-11|int16|sector_count_along_edge (unused in the game-code)|144|
 |12|int8|spangdv (value / 10) (coef. to calculate angular speed change depending snake speed)|4.8|
-|13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|
-|15-16|int16|nsp2 (value / 100)|0.5|
-|17-18|int16|nsp3 (value / 100)|12|
+|13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|5.39|
+|15-16|int16|nsp2 (value / 100)|0.4|
+|17-18|int16|nsp3 (value / 100)|14|
 |19-20|int16|mamu (value / 1E3) (basic snake angular speed)|0.033|
 |21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|
 |23-24|int16|cst (value / 1E3) (snake tail speed ratio )|0.43|
