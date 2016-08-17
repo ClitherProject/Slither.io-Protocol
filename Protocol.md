@@ -68,23 +68,24 @@ Most packets start like this:
 
 
 <a name="type_a_detail" href="#type_a_detail"><h4>Packet "a" (Initial setup)</h4></a>
-Tells the Client some basic information. After the message arrives, the game calls
+Tells the Client some basic information. The original client has some hard-coded values for these constants, but they get overridden by this packet.
+After the message arrives, the game calls
 "startShowGame();"
 
-|Bytes|Data Type|Description|Default|
-|-----|---------|-----------|-------|
-|3-5|int24|Game Radius|21600|
-|6-7|int16|mscps (maximum snake length in body parts units)|411|
-|8-9|int16|sector_size|300|
-|10-11|int16|sector_count_along_edge (unused in the game-code)|144|
-|12|int8|spangdv (value / 10) (coef. to calculate angular speed change depending snake speed)|4.8|
-|13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|5.39|
-|15-16|int16|nsp2 (value / 100)|0.4|
-|17-18|int16|nsp3 (value / 100)|14|
-|19-20|int16|mamu (value / 1E3) (basic snake angular speed)|0.033|
-|21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|
-|23-24|int16|cst (value / 1E3) (snake tail speed ratio )|0.43|
-|25|int8|protocol_version|8|
+|Bytes|Data Type|Description|Hard-coded defaults|Typical response|
+|-----|---------|-----------|-------------------|----------------|
+|3-5|int24|Game Radius|16384|21600|
+|6-7|int16|mscps (maximum snake length in body parts units)|300|411|
+|8-9|int16|sector_size|480|300|
+|10-11|int16|sector_count_along_edge (unused in the game-code)|130|144|
+|12|int8|spangdv (value / 10) (coef. to calculate angular speed change depending snake speed)|4.8|4.8|
+|13-14|int16|nsp1 (value / 100) (Maybe nsp stands for "node speed"?)|4.25|5.39|
+|15-16|int16|nsp2 (value / 100)|0.5|0.4|
+|17-18|int16|nsp3 (value / 100)|12|14|
+|19-20|int16|mamu (value / 1E3) (basic snake angular speed)|0.033|0.033|
+|21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|0.028|
+|23-24|int16|cst (value / 1E3) (snake tail speed ratio )|0.43|0.43|
+|25|int8|protocol_version|2|8|
 
 `sct` is a snake body parts count (length) taking values between [2 .. mscps].
 `fpsls[mscps]` contains snake volume (score) to snake length in body parts units.
