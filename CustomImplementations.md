@@ -6,6 +6,7 @@ If you've made or found more, just add them.
 
 |Name|Language|link|Status|
 |----|--------|----|------|
+|Plither (v1.4.0) with Slither-Server|JavaScript|https://github.com/PlitherProject/Plither |Active|
 |Slither-Server|JavaScript|https://github.com/RowanHarley/Slither-Server|Active|
 |Clither Server|Java|https://github.com/ClitherProject/Clither-Server|Cancelled|
 |slither|JavaScript|https://github.com/iiegor/slither|Inactive|
@@ -17,8 +18,8 @@ If you've made or found more, just add them.
 
 |Name|Language|link|Status|
 |----|--------|----|------|
-|Slyther|Java|https://github.com/gegy1000/Slyther|Very Active|
-|Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|Active|
+|Plither|JavaScript|https://github.com/PlitherProject/Plither|Active|
+|Slyther|Java|https://github.com/gegy1000/Slyther|Inactive|
+|Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|Inactive|
 |MySlither|Java|https://github.com/Mat2095/MySlither|Active|
 |RattleSnake|JavaScript|https://github.com/dahquan/rattlesnake|Inactive|
-|Plither|JavaScript|https://github.com/PlitherProject/Plither|Inactive|
