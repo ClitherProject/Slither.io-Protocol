@@ -21,5 +21,5 @@ If you've made or found more, just add them.
 |Plither|JavaScript|https://github.com/PlitherProject/Plither|Active|
 |Slyther|Java|https://github.com/gegy1000/Slyther|Inactive|
 |Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|Inactive|
-|MySlither|Java|https://github.com/Mat2095/MySlither|Active|
+|MySlither|Java|https://github.com/Mat2095/MySlither|Inactive|
 |RattleSnake|JavaScript|https://github.com/dahquan/rattlesnake|Inactive|
