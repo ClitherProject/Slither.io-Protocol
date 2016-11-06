@@ -1,4 +1,4 @@
-# Slither.io Protocol Version 8  
+# Slither.io Protocol Version 10
 
 Note: all values are unsigned.
 
@@ -37,6 +37,7 @@ Most packets start like this:
 
 |Type Identifier|Meaning|
 |---------------|-------|
+|6              |<a href="#type_6_detail">Pre-init response</a>|
 |a              |<a href="#type_a_detail">Initial setup</a>|
 |e              |<a href="#type_e_detail">Snake rotation counterclockwise (?dir ang ?wang ?sp)</a>|
 |E              |<a href="#type_E_detail">Snake rotation counterclockwise (dir wang ?sp)</a>|
@@ -65,6 +66,55 @@ Most packets start like this:
 |y              |<a href="#type_y_detail">Add/remove Prey</a>|
 |k              |<a href="#type_k_detail">Kill (unused in the game-code)</a>|
 
+
+<a name="type_6_detail" href="#type_6_detail"><h4>Packet "6" (Pre-init response)</h4></a>
+This is the first packet received. It is an encoded JavaScript-file that the client executes. It generates a string, that is further manipulated by the client and sent back to the server. This is done for verification / bot-protection (if the clients answer is wrong, the connection is closed).
+After that, the client continues with the SetUsernameAndSkin-Packet.
+
+|Byte|DataType|Description|
+|----|--------|-----------|
+|3-?|encoded string|JavaScript-expressions|
+
+Here is some Java-code for how to get the correct answer to send to the server:
+```Java
+private static byte[] decodeSecret(int[] secret) {
+
+    byte[] result = new byte[24];
+
+    int globalValue = 0;
+    for (int i = 0; i < 24; i++) {
+        int value1 = secret[17 + i * 2];
+        if (value1 <= 96) {
+            value1 += 32;
+        }
+        value1 = (value1 - 98 - i * 34) % 26;
+        if (value1 < 0) {
+            value1 += 26;
+        }
+
+        int value2 = secret[18 + i * 2];
+        if (value2 <= 96) {
+            value2 += 32;
+        }
+        value2 = (value2 - 115 - i * 34) % 26;
+        if (value2 < 0) {
+            value2 += 26;
+        }
+
+        int interimResult = (value1 << 4) | value2;
+        int offset = interimResult >= 97 ? 97 : 65;
+        interimResult -= offset;
+        if (i == 0) {
+            globalValue = 2 + interimResult;
+        }
+        result[i] = (byte) ((interimResult + globalValue) % 26 + offset);
+        globalValue += 3 + interimResult;
+    }
+
+    return result;
+}
+```
+Notice that while this currently works, it is possible that the official servers will use more complex "riddles" soon that won't work any more.
 
 
 <a name="type_a_detail" href="#type_a_detail"><h4>Packet "a" (Initial setup)</h4></a>
@@ -601,6 +651,14 @@ Sent when another snake dies by running into the player; not sent when the kille
 ## Clientbound
 
 All packets sent from the client contain no headers.
+
+### Packet StartLogin
+This is the first packet sent. The server will then respond with the <a href="#type_6_detail">Pre-init response</a>.
+
+|Byte|Data type|Description|
+|----|---------|-----------|
+|0|int8|99 (= 'c')|
+
 
 ### Packet SetUsernameAndSkin
 This packet is sent before sending the ping packet to the server. The setup packet will only be sent after receiving this and the ping packet.
