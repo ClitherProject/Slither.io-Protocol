@@ -4,14 +4,12 @@ If you've made or found more, just add them.
 <a id="servers"></a>
 ### Servers
 
-|Name|Language|link|Status|
-|----|--------|----|------|
-|Plither (v1.4.0) with Slither-Server|JavaScript|https://github.com/PlitherProject/Plither |Active|
-|Slither-Server|JavaScript|https://github.com/RowanHarley/Slither-Server|Active|
-|Clither Server|Java|https://github.com/ClitherProject/Clither-Server|Cancelled|
-|slither|JavaScript|https://github.com/iiegor/slither|Inactive|
-|JSlither|JavaScript|https://github.com/circa94/JSlither|Inactive|
-|slitherss|C++|https://github.com/sitano/slitherss|Inactive|
+|Name|Language|link|Protocol-Version|Status|
+|----|--------|----|----------------|------|
+|Slither-Server|JavaScript|https://github.com/RowanHarley/Slither-Server|8|Inactive|
+|slitherss|C++|https://github.com/sitano/slitherss|8|Inactive|
+|slither|JavaScript|https://github.com/iiegor/slither|8|Inactive|
+|JSlither|JavaScript|https://github.com/circa94/JSlither|6|Inactive|
 
 <a id="clients"></a>
 ### Clients
