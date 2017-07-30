@@ -474,7 +474,7 @@ function appendDiv(id, className, style) {
         ctx.lineWidth = thickness;
 
         ctx.beginPath();
-        for each (var p in pts) {
+        for (var p in pts) {
             p = getDrawPosition(p);
             ctx.rect(p.x, p.y, thickness, thickness);
         }
