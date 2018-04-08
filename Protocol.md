@@ -670,7 +670,7 @@ This packet is sent before sending the ping packet to the server. The setup pack
 |2|int8|Skin ID currently between 0-38 meaning 39 skins available|
 |3|int8|Nickname length (`n`)|
 |4-(3+`n`) (`n` values)|string|The client's nickname, if set|
-|4+`n`-?|bytes|Custom-skin-data|
+|(4+`n`)-?|bytes|Custom-skin-data|
 
 #### Custom-skin-data
 The custom-skin-data is a byte-array.
