@@ -666,9 +666,18 @@ This packet is sent before sending the ping packet to the server. The setup pack
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |0|int8|First ID (always 115 = 's')|
-|1|int8|Second ID (protocolVersion - 1, currently 8-1=7)|
+|1|int8|Second ID (protocolVersion, currently 10; in the past this was protocolVersion-1)|
 |2|int8|Skin ID currently between 0-38 meaning 39 skins available|
-|3-?|string|The client's nickname, if set|
+|3|int8|Nickname length (`n`)|
+|4-(3+`n`) (`n` values)|string|The client's nickname, if set|
+|4+`n`-?|bytes|Custom-skin-data|
+
+#### Custom-skin-data
+The custom-skin-data is a byte-array.
+
+It consists of three times 255, three times 0, two random values (`Math.floor(256 * Math.random())`, there is no meaning), then starting at the head for each new color the number of times the color appears followed by the color-id.
+
+It is stored in the localStorage, key 'custom_skin' (string with ,-separated values).
 
 
 ### Packet Ping
