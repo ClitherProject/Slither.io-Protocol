@@ -1,4 +1,4 @@
-# Slither.io Protocol Version 10
+# Slither.io Protocol Version 11
 
 Note: all values are unsigned.
 
@@ -10,27 +10,11 @@ representations.
 
 Most packets start like this:
 
-<table>
-  <tr>
-    <th>Byte</th>
-    <th>Meaning</th>
-  </tr>
-  <tr>
-    <td>0</td><td rowspan="2">Time since last message to client</td>
-  </tr>
-  <tr>
-    <td>1</td>
-  </tr>
-  <tr>
-    <td>2</td><td><a href="#typetable">Message Type</a></td>
-  </tr>
-  <tr>
-    <td>3</td><td rowspan="2">Snake ID</td>
-  </tr>
-  <tr>
-    <td>4</td>
-  </tr>
-</table>
+|Byte|Meaning|
+|----|-------|
+|0-1 |Time since last message to client|
+|2   |<a href="#typetable">Message Type</a>|
+|3-4 |Snake ID|
 
 
 <a name="typetable" href="#typetable"><h3>Message Types</h3></a>
@@ -495,26 +479,28 @@ drawn on screen) or dies.
 |3-4|int16|Snake id|
 |5|int8|0 (snake left range) or 1 (snake died)|
 
-##### Variant 2: packet-size >= 31
+##### Variant 2: packet-size >= 34
 Sent when another snake enters range.
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Snake id|
 |5-7|int24|Snake ehang / wehang (value \* 2 \* Math.PI / 16777215)|
-|8|int8|Unused. The 8. Byte is Unused in the game code. But the Server sends it filled with a value. Maybe we miss something here?|
+|8|int8|Unused. The 8th byte is unused in the game code. But the Server sends it filled with a value. Maybe we miss something here?|
 |9-11|int24|Snake angle eang / wang (value \* 2 \* Math.PI / 16777215)|
 |12-13|int16|Snake speed (value / 1E3)|
 |14-16|int24|Snake last body part fullness (fam / 16777215)|
 |17|int8|Snake skin (between 9 or 0? and 21)|
 |18-20|int24|value / 5 snake X pos|
 |21-23|int24|value / 5 snake Y pos|
-|24|int8|Name length|
-|25+Name length|string|Snake nickname|
-|?|int24|Last snake body part (tail) position in absolute coords (x / 5)|
-|?|int24|Last snake body part (tail) position in absolute coords (y / 5)|
-|?|int8|Next position in relative coords from prev. element (x - 127) / 2|
-|?|int8|Next position in relative coords from prev. element (y - 127) / 2|
+|24|int8|Name length (-> `n`)|
+|25-(24+`n`) (`n` values)|string|Snake nickname|
+|25+`n`|int8|Custom-skin-data-length (-> `s`)|
+|(26+`n`)-(25+`n`+`s`) (`s` values)|bytes|<a href="#custom_skin_data">Custom-skin-data</a>|
+|(26+`n`+`s`)-(28+`n`+`s`)|int24|Last snake body part (tail) position in absolute coords (x / 5)|
+|(29+`n`+`s`)-(31+`n`+`s`)|int24|Last snake body part (tail) position in absolute coords (y / 5)|
+|32+`n`+`s`|int8|Next position in relative coords from prev. element (x - 127) / 2|
+|33+`n`+`s`|int8|Next position in relative coords from prev. element (y - 127) / 2|
 
 The last two bytes repeat for each body part.
 
@@ -670,14 +656,7 @@ This packet is sent before sending the ping packet to the server. The setup pack
 |2|int8|Skin ID currently between 0-38 meaning 39 skins available|
 |3|int8|Nickname length (`n`)|
 |4-(3+`n`) (`n` values)|string|The client's nickname, if set|
-|(4+`n`)-?|bytes|Custom-skin-data|
-
-#### Custom-skin-data
-The custom-skin-data is a byte-array.
-
-It consists of three times 255, three times 0, two random values (`Math.floor(256 * Math.random())`, there is no meaning), then starting at the head for each new color the number of times the color appears followed by the color-id.
-
-It is stored in the localStorage, key 'custom_skin' (string with ,-separated values).
+|(4+`n`)-?|bytes|<a href="#custom_skin_data">Custom-skin-data</a>|
 
 
 ### Packet Ping
@@ -708,3 +687,28 @@ When you have the longest snake of the day, you're able to send a victory messag
 |0|int8|First ID (always 255)|
 |1|int8|Second ID (always 118)|
 |2-?|string|The victory message|
+
+
+
+## Additional information
+
+<a name="custom_skin_data" href="#custom_skin_data"><h3>Custom-skin-data</h3></a>
+
+|Bytes|Description|
+|-----|-----------|
+|0|Always 255|
+|1|Always 255|
+|2|Always 255|
+|3|Always 0|
+|4|Always 0|
+|5|Always 0|
+|6|`Math.floor(256 * Math.random())`|
+|7|`Math.floor(256 * Math.random())`|
+|8|Size of color-group|
+|9|Color-id of color-group|
+
+The last two bytes repeat for each color-group, starting at the head
+
+The first 8 bytes have no meaning, the server accepts anything here and sends that data to other players.
+
+The own custom-skin is stored in the localStorage, key 'custom_skin' (string with comma-separated values).
