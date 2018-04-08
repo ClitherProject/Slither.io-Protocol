@@ -16,7 +16,7 @@ If you've made or found more, just add them.
 
 |Name|Language|link|Protocol-Version|GitHub-Stars|
 |----|--------|----|----------------|-----|
+|MySlither|Java|https://github.com/Mat2095/MySlither|![11](https://img.shields.io/badge/protocol-11-brightgreen.svg)|![](https://img.shields.io/github/stars/Mat2095/MySlither.svg)|
 |Slyther|Java|https://github.com/gegy1000/Slyther|![10](https://img.shields.io/badge/protocol-10-green.svg)|![](https://img.shields.io/github/stars/gegy1000/Slyther.svg)|
-|MySlither|Java|https://github.com/Mat2095/MySlither|![10](https://img.shields.io/badge/protocol-10-green.svg)|![](https://img.shields.io/github/stars/Mat2095/MySlither.svg)|
 |Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|![8](https://img.shields.io/badge/protocol-8-orange.svg)|![](https://img.shields.io/github/stars/agarioBotDev/Slither.io-Client.svg)|
 |RattleSnake|JavaScript|https://github.com/dahquan/rattlesnake|![8](https://img.shields.io/badge/protocol-8-orange.svg)|![](https://img.shields.io/github/stars/dahquan/rattlesnake.svg)|
