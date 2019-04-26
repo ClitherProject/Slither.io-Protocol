@@ -2,7 +2,7 @@
 
 Note: all values are unsigned.
 
-## Serverbound
+## Clientbound
 
 Every packet that comes from the server starts with a 3 byte header, which indicates the message
 type. The game converts the Message Type byte to a unicode characters so I will only list the character
@@ -634,7 +634,7 @@ Sent when another snake dies by running into the player; not sent when the kille
 
 
 
-## Clientbound
+## Serverbound
 
 All packets sent from the client contain no headers.
 
