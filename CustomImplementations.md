@@ -20,3 +20,4 @@ If you've made or found more, just add them.
 |Slyther|Java|https://github.com/gegy1000/Slyther|![10](https://img.shields.io/badge/protocol-10-green.svg)|![](https://img.shields.io/github/stars/gegy1000/Slyther.svg)|
 |Slither.io-Client|JavaScript|https://github.com/agarioBotDev/Slither.io-Client|![8](https://img.shields.io/badge/protocol-8-orange.svg)|![](https://img.shields.io/github/stars/agarioBotDev/Slither.io-Client.svg)|
 |RattleSnake|JavaScript|https://github.com/dahquan/rattlesnake|![8](https://img.shields.io/badge/protocol-8-orange.svg)|![](https://img.shields.io/github/stars/dahquan/rattlesnake.svg)|
+|Slitherode|JavaScript|https://github.com/vvanelslande/slitherode|![11](https://img.shields.io/badge/protocol-11-brightgreen.svg)|![](https://img.shields.io/github/stars/vvanelslande/slitherode.svg)|
