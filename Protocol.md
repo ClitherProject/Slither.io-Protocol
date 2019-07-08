@@ -119,7 +119,7 @@ After the message arrives, the game calls
 |19-20|int16|mamu (value / 1E3) (basic snake angular speed)|0.033|0.033|
 |21-22|int16|manu2 (value / 1E3) (angle in rad per 8ms at which prey can turn)|0.028|0.028|
 |23-24|int16|cst (value / 1E3) (snake tail speed ratio )|0.43|0.43|
-|25|int8|protocol_version|2|8|
+|25|int8|protocol_version|2|11|
 
 `sct` is a snake body parts count (length) taking values between [2 .. mscps].
 `fpsls[mscps]` contains snake volume (score) to snake length in body parts units.
@@ -652,7 +652,7 @@ This packet is sent before sending the ping packet to the server. The setup pack
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |0|int8|First ID (always 115 = 's')|
-|1|int8|Second ID (protocolVersion, currently 10; in the past this was protocolVersion-1)|
+|1|int8|Second ID (protocol_version-1, currently 10 for protocol_version 11)|
 |2|int8|Skin ID currently between 0-38 meaning 39 skins available|
 |3|int8|Nickname length (`n`)|
 |4-(3+`n`) (`n` values)|string|The client's nickname, if set|
