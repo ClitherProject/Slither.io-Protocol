@@ -52,7 +52,7 @@ Most packets start like this:
 |k              |<a href="#type_k_detail">Kill (unused in the game-code)</a>|
 
 
-<a name="type_6_detail" href="#type_6_detail"><h4>Packet "6" (Pre-init response)</h4></a>
+<a name="type_6_detail" href="#type_6_detail"><h3>Packet "6" (Pre-init response)</h3></a>
 This is the first packet received. It is an encoded JavaScript-file that the client executes. It generates a string, that is further manipulated by the client and sent back to the server. This is done for verification / bot-protection (if the clients answer is wrong, the connection is closed).
 After that, the client continues with the SetUsernameAndSkin-Packet.
 
@@ -102,7 +102,7 @@ private static byte[] decodeSecret(int[] secret) {
 Notice that while this currently works, it is possible that the official servers will use more complex "riddles" soon that won't work any more.
 
 
-<a name="type_a_detail" href="#type_a_detail"><h4>Packet "a" (Initial setup)</h4></a>
+<a name="type_a_detail" href="#type_a_detail"><h3>Packet "a" (Initial setup)</h3></a>
 Tells the Client some basic information. The original client has some hard-coded values for these constants, but they get overridden by this packet.
 After the message arrives, the game calls
 "startShowGame();"
@@ -153,7 +153,7 @@ of snake speed. `scang` - influence of snake length.
 
         eang = mamu * vfr * e.scang * e.spang;
 
-<a name="type_e_detail" href="#type_e_detail"><h4>Packet "e" (Snake rotation counterclockwise (?dir ang ?wang ?sp))</h4></a>
+<a name="type_e_detail" href="#type_e_detail"><h3>Packet "e" (Snake rotation counterclockwise (?dir ang ?wang ?sp))</h3></a>
 
 Update snake rotation direction. There are 4 parameters 
 (direction, angle, wanted angle, speed) which combination determines 
@@ -190,7 +190,7 @@ If packet length is 4 + 2, then rotation defined by the angle:
 Most used packets are "e" and "4", then "5" and "3".
 
 
-<a name="type_E_detail" href="#type_E_detail"><h4>Packet "E" (Snake rotation counterclockwise (dir wang ?sp))</h4></a>
+<a name="type_E_detail" href="#type_E_detail"><h3>Packet "E" (Snake rotation counterclockwise (dir wang ?sp))</h3></a>
 
 Update snake rotation direction. There are 4 parameters 
 (direction, angle, wanted angle, speed) which combination determines 
@@ -216,7 +216,7 @@ If packet length is 4 + 2, then rotation is counterclockwise:
 |5|int8|wang * pi2 / 256 (target rotation angle snake is heading to)|
 
 
-<a name="type_3_detail" href="#type_3_detail"><h4>Packet "3" (Snake rotation counterclockwise (dir ang wang | sp))</h4></a>
+<a name="type_3_detail" href="#type_3_detail"><h3>Packet "3" (Snake rotation counterclockwise (dir ang wang | sp))</h3></a>
 
 Update snake rotation direction. There are 4 parameters 
 (direction, angle, wanted angle, speed) which combination determines 
@@ -244,7 +244,7 @@ If packet length is 4 + 2, then packet contains speed only:
 Most used packets are "e" and "4", then "5" and "3".
 
 
-<a name="type_4_detail" href="#type_4_detail"><h4>Packet "4" (Snake rotation clockwise (dir ang? wang ?sp))</h4></a>
+<a name="type_4_detail" href="#type_4_detail"><h3>Packet "4" (Snake rotation clockwise (dir ang? wang ?sp))</h3></a>
 
 Update snake rotation direction. There are 4 parameters 
 (direction, angle, wanted angle, speed) which combination determines 
@@ -281,7 +281,7 @@ If packet length is 4 + 2, then packet contains speed only:
 Most used packets are "e" and "4", then "5" and "3".
 
 
-<a name="type_5_detail" href="#type_5_detail"><h4>Packet "5" (Snake rotation clockwise (dir ang wang))</h4></a>
+<a name="type_5_detail" href="#type_5_detail"><h3>Packet "5" (Snake rotation clockwise (dir ang wang))</h3></a>
 
 Update snake rotation direction. There are 4 parameters 
 (direction, angle, wanted angle, speed) which combination determines 
@@ -309,7 +309,7 @@ If packet length is 4 + 2, then packet contains speed only:
 Most used packets are "e" and "4", then "5" and "3".
 
 
-<a name="type_h_detail" href="#type_h_detail"><h4>Packet "h" (Update snake last body part fullness (fam))</h4></a>
+<a name="type_h_detail" href="#type_h_detail"><h3>Packet "h" (Update snake last body part fullness (fam))</h3></a>
 
 Update the fam-value (used for length-calculation) of a snake.
 `fam` is a float value (usually in [0 .. 1.0]) representing
@@ -323,7 +323,7 @@ parts. Snake gets new body part when `fam` reaches 1, and looses
 |5-7|int24|value / 16777215 -> fam|
 
 
-<a name="type_r_detail" href="#type_r_detail"><h4>Packet "r" (Remove snake part)</h4></a>
+<a name="type_r_detail" href="#type_r_detail"><h3>Packet "r" (Remove snake part)</h3></a>
 
 Removes the last part from this snake.
 
@@ -340,7 +340,7 @@ Removes the last part from this snake.
 |3-4|int16|Snake id|
 |5-7|int24|snake.fam fullness (value / 16777215))|
 
-<a name="type_g_detail" href="#type_g_detail"><h4>Packet "g" (Move snake)</h4></a>
+<a name="type_g_detail" href="#type_g_detail"><h3>Packet "g" (Move snake)</h3></a>
 
 Move snake into new position.
 
@@ -351,7 +351,7 @@ Move snake into new position.
 |7-8|int16|y|
 
 
-<a name="type_G_detail" href="#type_G_detail"><h4>Packet "G" (Move snake)</h4></a>
+<a name="type_G_detail" href="#type_G_detail"><h3>Packet "G" (Move snake)</h3></a>
 
 Move snake into new position.
 
@@ -362,7 +362,7 @@ Move snake into new position.
 |6|int8|value - 128 + head.y -> y|
 
 
-<a name="type_n_detail" href="#type_n_detail"><h4>Packet "n" (Increase snake)</h4></a>
+<a name="type_n_detail" href="#type_n_detail"><h3>Packet "n" (Increase snake)</h3></a>
 
 Move snake into new position and increase snake body
 length by 1 body-part. The fam-value is updated.
@@ -375,7 +375,7 @@ length by 1 body-part. The fam-value is updated.
 |9-11|int24|value / 16777215 -> fam|
 
 
-<a name="type_N_detail" href="#type_N_detail"><h4>Packet "N" (Increase snake)</h4></a>
+<a name="type_N_detail" href="#type_N_detail"><h3>Packet "N" (Increase snake)</h3></a>
 
 Move snake into new position and increase snake body
 length by 1 body-part. The fam-value is updated.
@@ -388,7 +388,7 @@ length by 1 body-part. The fam-value is updated.
 |7-9|int24|value / 16777215 -> fam|
 
 
-<a name="type_l_detail" href="#type_l_detail"><h4>Packet "l" (Leaderboard)</h4></a>
+<a name="type_l_detail" href="#type_l_detail"><h3>Packet "l" (Leaderboard)</h3></a>
 
 Packet "l" is required for displaying the leaderboard.
 
@@ -409,7 +409,7 @@ Snake score / length:
 
         Math.floor(15 * (fpsls[snake.sct] + snake.fam / fmlts[snake.sct] - 1) - 5) / 1
 
-<a name="type_v_detail" href="#type_v_detail"><h4>Packet "v" (dead/disconnect packet)</h4></a>
+<a name="type_v_detail" href="#type_v_detail"><h3>Packet "v" (dead/disconnect packet)</h3></a>
 
 Sent when player died.
 
@@ -418,7 +418,7 @@ Sent when player died.
 |3|int8|0-2; 0 is normal death, 1 is new highscore of the day, 2 is unknown (disconnect??)|
 
 
-<a name="type_W_detail" href="#type_W_detail"><h4>Packet "W" (Add Sector)</h4></a>
+<a name="type_W_detail" href="#type_W_detail"><h3>Packet "W" (Add Sector)</h3></a>
 
 Sent when a new Sector becomes active for the client.
 
@@ -427,7 +427,7 @@ Sent when a new Sector becomes active for the client.
 |3|int8|x-coordinate of the new sector|
 |4|int8|y-coordinate of the new sector|
 
-<a name="type_w_detail" href="#type_w_detail"><h4>Packet "w" (Remove Sector)</h4></a>
+<a name="type_w_detail" href="#type_w_detail"><h3>Packet "w" (Remove Sector)</h3></a>
 
 Sent when a Sector should be unloaded.
 
@@ -437,7 +437,7 @@ Sent when a Sector should be unloaded.
 |4|int8|y-coordinate of the sector|
 
 
-<a name="type_m_detail" href="#type_m_detail"><h4>Packet "m" (Global highscore)</h4></a>
+<a name="type_m_detail" href="#type_m_detail"><h3>Packet "m" (Global highscore)</h3></a>
 
 Packet "m" is required for displaying the global highscore
 
@@ -454,7 +454,7 @@ Snake score / length:
         Math.floor(15 * (fpsls[snake.sct] + snake.fam / fmlts[snake.sct] - 1) - 5) / 1
 
 
-<a name="type_u_detail" href="#type_u_detail"><h4>Packet "u" (Update minimap)</h4></a>
+<a name="type_u_detail" href="#type_u_detail"><h3>Packet "u" (Update minimap)</h3></a>
 
 Sent when the minimap is updated.
 
@@ -469,9 +469,9 @@ Hints for parsing the data:
         * go to the next pixel
 
 
-<a name="type_s_detail" href="#type_s_detail"><h4>Packet "s" (Add/remove Snake)</h4></a>
+<a name="type_s_detail" href="#type_s_detail"><h3>Packet "s" (Add/remove Snake)</h3></a>
 
-##### Variant 1: packet-size = 6
+#### Variant 1: packet-size = 6
 Sent when another snake leaves range (that is, close enough to be
 drawn on screen) or dies.
 
@@ -480,7 +480,7 @@ drawn on screen) or dies.
 |3-4|int16|Snake id|
 |5|int8|0 (snake left range) or 1 (snake died)|
 
-##### Variant 2: packet-size >= 34
+#### Variant 2: packet-size >= 34
 Sent when another snake enters range.
 
 |Bytes|Data type|Description|
@@ -506,7 +506,7 @@ Sent when another snake enters range.
 The last two bytes repeat for each body part.
 
 
-<a name="type_F_detail" href="#type_F_detail"><h4>Packet "F" (Add Food)</h4></a>
+<a name="type_F_detail" href="#type_F_detail"><h3>Packet "F" (Add Food)</h3></a>
 
 Sent when food that existed before enters range.
 
@@ -521,7 +521,7 @@ One packet can contain more than one food-entity, bytes 3-8 (=6 bytes!) repeat f
 The food id is calculated with (y * GameRadius * 3) + x
 
 
-<a name="type_b_detail" href="#type_b_detail"><h4>Packet "b" (Add Food)</h4></a>
+<a name="type_b_detail" href="#type_b_detail"><h3>Packet "b" (Add Food)</h3></a>
 
 Sent when food is created while in range (because of turbo or the death of a snake).
 
@@ -535,7 +535,7 @@ Sent when food is created while in range (because of turbo or the death of a sna
 The food id is calculated with (y * GameRadius * 3) + x
 
 
-<a name="type_f_detail" href="#type_f_detail"><h4>Packet "f" (Add Food)</h4></a>
+<a name="type_f_detail" href="#type_f_detail"><h3>Packet "f" (Add Food)</h3></a>
 
 Sent when natural food spawns while in range.
 
@@ -549,7 +549,7 @@ Sent when natural food spawns while in range.
 The food id is calculated with (y * GameRadius * 3) + x
 
 
-<a name="type_c_detail" href="#type_c_detail"><h4>Packet "c" (Eat Food)</h4></a>
+<a name="type_c_detail" href="#type_c_detail"><h3>Packet "c" (Eat Food)</h3></a>
 The food id is also calculated with (y * GameRadius * 3) + x
 
 |Bytes|Data type|Description|
@@ -561,7 +561,7 @@ The food id is also calculated with (y * GameRadius * 3) + x
 The packet doesn't always contain the eater snake id, in this case the food was removed for other reasons (?).
 
 
-<a name="type_j_detail" href="#type_j_detail"><h4>Packet "j" (Update Prey)</h4></a>
+<a name="type_j_detail" href="#type_j_detail"><h3>Packet "j" (Update Prey)</h3></a>
 
 Sent when prey ("flying particles") is updated.
 
@@ -593,23 +593,23 @@ Depending on the packet-length, different variables are sent:
 |18|direction, current angle, wanted angle, speed|
 
 
-<a name="type_y_detail" href="#type_y_detail"><h4>Packet "y" (Add/remove Prey)</h4></a>
+<a name="type_y_detail" href="#type_y_detail"><h3>Packet "y" (Add/remove Prey)</h3></a>
 
 Sent when a Prey enters range / spawns or leaves range / gets eaten.
 The exact event/format depends on the packet-length:
 
-##### packet-length 5: remove Prey
+#### packet-length 5: remove Prey
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Prey ID|
 
-##### packet-length 7: eat Prey
+#### packet-length 7: eat Prey
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Prey ID|
 |5-6|int16|Eater snake ID|
 
-##### packet-length 22: add Prey
+#### packet-length 22: add Prey
 |Bytes|Data type|Description|
 |-----|---------|-----------|
 |3-4|int16|Prey ID|
@@ -623,11 +623,11 @@ The exact event/format depends on the packet-length:
 |20-21|int16|value / 1000 -> speed|
 
 
-<a name="type_o_detail" href="#type_o_detail"><h4>Packet "o" (Verify code response)</h4></a>
+<a name="type_o_detail" href="#type_o_detail"><h3>Packet "o" (Verify code response)</h3></a>
 Response from the server when the player entered a code via the <a href="#serverbound_verify_code">verify code packet</a>, potentially unlocking cosmetics. No work was put into deciphering this packet-type yet (cosmetics are only visible locally, so it is pretty boring).
 
 
-<a name="type_k_detail" href="#type_k_detail"><h4>Packet "k" (Kill)</h4></a>
+<a name="type_k_detail" href="#type_k_detail"><h3>Packet "k" (Kill)</h3></a>
 Note: this packet is (currently) unused in the original client, so I can only guess what the variables mean.
 
 Sent when another snake dies by running into the player; not sent when the killer isn't the local player.
@@ -664,8 +664,7 @@ This packet is sent before sending the ping packet to the server. The setup pack
 |(4+`n`)-?|bytes|<a href="#custom_skin_data">Custom-skin-data</a>|
 
 
-### Packet Verify code
-<a name="serverbound_verify_code" href="#serverbound_verify_code"><h3>Custom-skin-data</h3></a>
+<a name="serverbound_verify_code" href="#serverbound_verify_code"><h3>Packet Verify code</h3></a>
 When you enter the username "bonkers", you can enter a 12-digit code. This code will be sent to the server for verification.
 
 |Bytes|Data type|Description|
