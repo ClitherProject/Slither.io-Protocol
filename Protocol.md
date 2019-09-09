@@ -48,6 +48,7 @@ Most packets start like this:
 |c              |<a href="#type_c_detail">Food eaten</a>|
 |j              |<a href="#type_j_detail">Update Prey</a>|
 |y              |<a href="#type_y_detail">Add/remove Prey</a>|
+|o              |<a href="#type_o_detail">Verify code response</a>|
 |k              |<a href="#type_k_detail">Kill (unused in the game-code)</a>|
 
 
@@ -622,6 +623,10 @@ The exact event/format depends on the packet-length:
 |20-21|int16|value / 1000 -> speed|
 
 
+<a name="type_o_detail" href="#type_o_detail"><h4>Packet "o" (Verify code response)</h4></a>
+Response from the server when the player entered a code via the <a href="#serverbound_verify_code">verify code packet</a>, potentially unlocking cosmetics. No work was put into deciphering this packet-type yet (cosmetics are only visible locally, so it is pretty boring).
+
+
 <a name="type_k_detail" href="#type_k_detail"><h4>Packet "k" (Kill)</h4></a>
 Note: this packet is (currently) unused in the original client, so I can only guess what the variables mean.
 
@@ -651,12 +656,24 @@ This packet is sent before sending the ping packet to the server. The setup pack
 
 |Bytes|Data type|Description|
 |-----|---------|-----------|
-|0|int8|First ID (always 115 = 's')|
+|0|int8|packet-type (here 115 = 's')|
 |1|int8|Second ID (protocol_version-1, currently 10 for protocol_version 11)|
 |2|int8|Skin ID currently between 0-38 meaning 39 skins available|
 |3|int8|Nickname length (`n`)|
 |4-(3+`n`) (`n` values)|string|The client's nickname, if set|
 |(4+`n`)-?|bytes|<a href="#custom_skin_data">Custom-skin-data</a>|
+
+
+### Packet Verify code
+<a name="serverbound_verify_code" href="#serverbound_verify_code"><h3>Custom-skin-data</h3></a>
+When you enter the username "bonkers", you can enter a 12-digit code. This code will be sent to the server for verification.
+
+|Bytes|Data type|Description|
+|-----|---------|-----------|
+|0|int8|packet-type (here 111 = 'o')|
+|1-2|int8|first group of four digits as one number|
+|3-4|int8|second group of four digits as one number|
+|5-6|int8|third group of four digits as one number|
 
 
 ### Packet Ping
